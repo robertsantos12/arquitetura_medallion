@@ -2,30 +2,14 @@
 
 ## Estado atual
 
-Acesso ao GitHub validado. Pipeline ainda não implementado e execução no Databricks ainda não validada.
+GitHub e Databricks conectados. Escrita e leitura Delta, MERGE e repetição sem duplicidade para a chave de teste foram validados pelo responsável no Databricks. Veja `evidencias.md`.
 
-## Etapas iniciais
-
-1. Preparar repositório e branch de trabalho.
-2. Identificar modalidade do Databricks, compute e catálogo/schema ou caminho disponível; executar leitura e escrita Delta em área de teste.
-3. Aprovar contratos: valor de estorno, status transacional, ordenação CDC e vigência de negócio.
-4. Implementar massa mínima e primeiro fluxo Bronze → Prata → Ouro.
+Etapa atual: estrutura modular, configuração, logs e preparação dos schemas dev. Execute `notebooks/01_preparar_projeto.ipynb` conforme o README e valide antes da geração de dados.
 
 ## Divisão de responsabilidades
 
-A IA prepara estrutura, configurações, gerador, implementação das regras aprovadas, testes e documentação. Cada entrega deve indicar mudanças, validação realizada e limitações.
+A IA prepara código, testes, documentação e commits na branch de trabalho. O responsável executa no workspace, revisa resultados e aprova regras financeiras e integração. Logs e falhas devem ser compartilhados sem tokens ou senhas.
 
-O responsável sênior aprova semântica financeira, histórico, rejeições e modelagem; revisa resultados e integração na main.
+## Próxima etapa
 
-## Organização prevista
-
-- src/medallion/: módulos do pipeline, criados conforme implementação.
-- notebooks/: execução e diagnóstico do ambiente.
-- tests/: testes com resultados conhecidos.
-- sql/: consultas analíticas.
-- scripts/: gerador de massa fictícia.
-- docs/: contratos, decisões e instruções.
-
-## Próxima informação necessária
-
-Modalidade do Databricks (Free Edition, ambiente corporativo ou outra) e existência de workspace com execução disponível. Não registrar tokens ou senhas no repositório.
+Validar suporte e acesso a Unity Catalog Volumes, definir contratos e criar uma massa sintética pequena e determinística. Depois implementar o primeiro fluxo Bronze → Prata → Ouro, preservando evolução incremental no Git.

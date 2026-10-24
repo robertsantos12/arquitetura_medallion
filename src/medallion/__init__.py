@@ -1,0 +1,1 @@
+"""Data product transacional NovaRota."""
