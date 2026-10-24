@@ -1,0 +1,53 @@
+{
+  "coleta_em": "2026-10-24T19:21:49.593953+00:00",
+  "original_sha256": "f32142a4cc7047cc6f55f652b73c416cbf9a50d54302ecc078c9825d69c5fc31",
+  "publicado_sha256": "5b07401cc4132c3306f6c79a7e608d72acb2ee21f3d1e1d456a93d525debefb3",
+  "proveniencia": "Export enviado pelo operador; outputs revisados sem consulta direta ao Databricks.",
+  "resultado": {
+    "run_id": "781e28dd-3e22-4099-a4dc-61ee50e282a9",
+    "status": "SUCESSO",
+    "eventos": 7,
+    "codigo_sha256": "0030f2749ef74d2bc6c88e6cda3d94e7b2fa80904e2089c829ff74d4a528a632",
+    "hashes_verificados": true
+  },
+  "lotes": [
+    {
+      "lote": "01_inicial",
+      "registros": {
+        "clientes_cdc": 4,
+        "contas_cdc": 4,
+        "cartoes_cdc": 4,
+        "transacoes": 7,
+        "eventos_risco": 1,
+        "estornos": 1
+      }
+    },
+    {
+      "lote": "02_incremental",
+      "registros": {
+        "clientes_cdc": 1,
+        "contas_cdc": 1,
+        "cartoes_cdc": 2,
+        "transacoes": 4,
+        "eventos_risco": 2,
+        "estornos": 2
+      }
+    },
+    {
+      "lote": "03_atrasado",
+      "registros": {
+        "clientes_cdc": 1,
+        "contas_cdc": 0,
+        "cartoes_cdc": 0,
+        "transacoes": 2,
+        "eventos_risco": 0,
+        "estornos": 0
+      }
+    }
+  ],
+  "arquivos_dados": 17,
+  "registros": 36,
+  "manifesto_cenario_sha256": "a5c2641f521186ceebe3c5051fbb1fefaa2808f484e34d9532d122dc06f9e00b",
+  "verificacao_local": "Manifesto e snapshot de fontes reconstruidos localmente; hashes coincidem com os outputs.",
+  "metadados_databricks_removidos": true
+}
