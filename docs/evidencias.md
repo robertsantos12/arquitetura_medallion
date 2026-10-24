@@ -1,26 +1,28 @@
 # Evidências de validação
 
-## Etapa 1 — Delta
+## Estado atual — 24/10/2026
 
-Execução realizada no Databricks pelo responsável pelo projeto e confirmada na conversa de 24/10/2026. Saída informada:
+| Etapa | Resultado | Evidência |
+| --- | --- | --- |
+| 00 — Delta | Validada | Export enviado pelo responsável, com outputs e sem saídas de erro |
+| 01 — Estrutura | Validada | Export com importação do pacote e confirmação dos cinco schemas |
+| 02 — Rastreabilidade | Implementada; integração pendente | 17 testes locais aprovados; aguarda execução no Databricks |
+| 03 — Releitura | Implementada; integração pendente | Aguarda os três run_ids produzidos pelo 02 |
 
-```text
-VALIDAÇÃO DELTA: OK
-Catálogo: workspace
-Schema: medallion_dev_setup
-Formato: delta
-MERGE e releitura: OK
-Repetição sem duplicidade para id=1: OK
-```
+Os códigos das células dos exports 00 e 01 correspondem ao commit feab6257ee1389403335eff4be0f72898ca89093. A validação identificou os marcadores de conclusão e os outputs esperados. O contador execution_count=0 do export não foi usado para rejeitar arquivos que possuem resultados.
 
-Escopo: tabela de diagnóstico com chave controlada; não comprova idempotência de ingestão nem transformações futuras. A confirmação textual não substitui um log ou exportação de células executadas como evidência final da entrega.
+O teste 00 comprova formato Delta, MERGE, releitura e repetição sem duplicidade para id=1. Não comprova idempotência do futuro pipeline. O 01 comprova os schemas medallion_dev_landing, bronze, prata, ouro e controle no catálogo workspace.
 
-## Etapa 2 — Estrutura
+## Arquivamento dos exports
 
-Validação no Databricks pendente. Executar `notebooks/01_preparar_projeto.ipynb` e registrar a saída final.
+Exports completos verificados, mas ainda não publicados no repositório. O arquivamento precisa preservar o conteúdo recebido e registrar o escopo de eventual remoção de metadados pessoais. Os módulos importados durante a execução original não tinham snapshot; os exports comprovam o código das células, não a versão exata desses módulos.
 
-Verificação local em 24/10/2026: `PYTHONPATH=src python3 -m unittest discover -s tests -v`, com 7 testes aprovados. Sintaxe das células do notebook e estrutura do pyproject.toml também verificadas. Os testes locais verificam apenas as regras Python e a propagação de falhas; a integração com o ambiente depende da execução no Databricks.
+A exportação com outputs funcionou. A divergência no caminho de commit pela pasta Git permanece sem causa determinada. Veja docs/rastreabilidade_execucoes.md para a investigação anterior.
 
-## Preservação dos outputs
+## Testes locais da rastreabilidade
 
-Em 24/10/2026, os prints enviados mostram a opção included e a conclusão bem-sucedida do notebook 00 no workspace. O commit 8eb90b2a78304b7661146e3a123cf948ed43ca4b contém 00 e 01 com outputs vazios; os hashes Git dos bytes foram conferidos. A preservação remota das execuções continua pendente. Exportar as saídas atuais antes de reexecutar ou sincronizar. Ver docs/rastreabilidade_execucoes.md. Os prints foram apenas inspecionados na conversa, não adicionados ao repositório.
+Comando: `PYTHONPATH=src python3 -m unittest discover -s tests -v`.
+
+Resultado: 17 testes aprovados. Cobertura: configuração, bootstrap, repetição de lote com tentativas distintas, propagação de erro, falha de persistência, corrupção de arquivos e fontes, eventos duplicados/ausentes, ausência de verificações e execução interrompida.
+
+Esses testes usam arquivos temporários e um destino em memória. Não representam uma execução real em Spark/Delta/Volumes. A sintaxe das células de 02 e 03 foi verificada sem executar Databricks.

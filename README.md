@@ -6,7 +6,8 @@ Construção incremental: cada etapa passa por testes locais e validação no wo
 ## Situação
 
 - Etapa 1 validada pelo responsável no Databricks: Delta, MERGE, releitura e repetição sem duplicidade para a chave de teste.
-- Etapa 2 implementada: pacote Python, configuração, logs JSON, bootstrap dev e testes unitários. Evidência de execução no Databricks ainda pendente de verificação.
+- Etapa 2 validada nos exports recebidos: pacote Python, configuração, logs e cinco schemas dev.
+- Etapa 2B implementada: eventos Delta e evidências em Volume; integração aguarda execução de 02/03.
 - Dados sintéticos, Bronze, Prata/SCD2, Ouro e SQL analítico ainda não implementados.
 
 ## Executar a etapa 2 no Databricks
@@ -62,7 +63,7 @@ O trabalho atual está em `chore/estrutura-inicial`. Após validação, a integr
 
 ## Próximas etapas
 
-1. Preservar as exportações de 00/01, validar a rastreabilidade e confirmar suporte a Unity Catalog Volumes.
+1. Executar 02_validar_rastreabilidade e 03_reler_evidencias para validar Delta + Volume.
 2. Definir contratos, gerar massa sintética determinística e validar arquivos no Volume.
 3. Implementar Bronze incremental, metadados e preservação de schema.
 4. Implementar qualidade, quarentena, MERGE e SCD2 na Prata, com testes de transformação.
@@ -74,4 +75,8 @@ Veja `docs/architecture.md`, `docs/decisions.md` e `docs/evidencias.md`.
 
 Os outputs dos notebooks devem acompanhar os commits de validação. O repositório inclui `.databricks/commit_outputs`; é necessário habilitar o recurso no workspace e verificar o primeiro envio com resultados reais. Consulte `docs/preservacao_execucoes.md` antes de executar as próximas etapas. Esta configuração preserva checkpoints feitos por commit, e não todas as tentativas automaticamente.
 
-A investigação de 24/10/2026 confirmou outputs vazios no GitHub apesar de resultados visíveis no workspace. Antes de continuar, consulte `docs/rastreabilidade_execucoes.md` e preserve os notebooks por exportação com outputs. Histórico persistente em Delta/Volumes é uma proposta ainda não implementada.
+A investigação de 24/10/2026 confirmou outputs vazios no GitHub apesar de resultados visíveis no workspace. Antes de continuar, consulte `docs/rastreabilidade_execucoes.md` e preserve os notebooks por exportação com outputs. A primeira implementação de registro Delta/Volume está disponível e aguarda teste no workspace; veja docs/rastreabilidade_implementacao.md.
+
+## Próxima execução — etapa 2B
+
+Faça Pull e execute `notebooks/02_validar_rastreabilidade.ipynb`. Ele registra duas tentativas de sucesso e uma falha controlada, preservadas separadamente. Depois use os três run_ids no notebook `03_reler_evidencias.ipynb`, em nova sessão Python. Instruções: `docs/rastreabilidade_implementacao.md`. Foram aprovados 17 testes locais; as integrações Delta e Volume ainda precisam dessa execução.
