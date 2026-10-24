@@ -69,3 +69,7 @@ O trabalho atual está em `chore/estrutura-inicial`. Após validação, a integr
 5. Implementar Ouro, SQL avançado, testes ponta a ponta e evidências.
 
 Veja `docs/architecture.md`, `docs/decisions.md` e `docs/evidencias.md`.
+
+## Evidências padronizadas
+
+Os outputs dos notebooks devem acompanhar os commits de validação. O repositório inclui `.databricks/commit_outputs`; é necessário habilitar o recurso no workspace e verificar o primeiro envio com resultados reais. Consulte `docs/preservacao_execucoes.md` antes de executar as próximas etapas. Esta configuração preserva checkpoints feitos por commit, e não todas as tentativas automaticamente.

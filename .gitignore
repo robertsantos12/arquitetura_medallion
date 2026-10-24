@@ -14,7 +14,8 @@ dist/
 .env.*
 !.env.example
 .databrickscfg
-.databricks/
+.databricks/*
+!.databricks/commit_outputs
 *.pem
 *.key
 
