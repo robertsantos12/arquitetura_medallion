@@ -32,3 +32,9 @@ Esses testes usam arquivos temporários e um destino em memória. Não represent
 O output enviado confirma RASTREABILIDADE: OK, com três tentativas distintas: SUCESSO, SUCESSO e FALHOU (esperada no teste). Cada tentativa tem 3 eventos e hashes_verificados=True. O hash de código informado coincide com o snapshot local do pacote preparado para essa entrega. O registro estruturado está em [resultado informado](evidencias/2026-10-24_rastreabilidade_02/resultado_informado.json).
 
 A IA não consultou o Delta/Volume diretamente e não recebeu export do notebook 02. A releitura em nova sessão pelo notebook 03 permanece pendente. O resultado informado é preservado como tal, sem fabricar outputs de notebook nem horários ausentes.
+
+## Atualização — Etapa 04 V2 validada em 24/10/2026
+
+O notebook exportado com outputs confirma 21 clientes distintos, 12.158 transações, 138 arquivos novos, três lotes, seis fontes e auditoria final SUCESSO com hashes verificados. RUN_ID: `45599d53-5189-4644-b92a-703eb3b5154d`. O notebook com outputs foi versionado em `notebooks/04_gerar_dados_sinteticos_v2.ipynb` e os detalhes estão em [evidências V2](evidencias/2026-10-24_geracao_sintetica_v2/README.md).
+
+O registro atesta a geração no Databricks, não a ingestão Bronze nem as camadas posteriores. A nota inicial deste documento é um histórico anterior à validação da V2.
