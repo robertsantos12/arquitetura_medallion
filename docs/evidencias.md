@@ -23,4 +23,4 @@ Verificação local em 24/10/2026: `PYTHONPATH=src python3 -m unittest discover 
 
 ## Preservação dos outputs
 
-Política preparada em `.databricks/commit_outputs`, com instruções em `docs/preservacao_execucoes.md`. Habilitação no workspace e primeiro commit com outputs reais ainda pendentes. Reexecutar 00 e 01 e versionar cada validação antes de avançar. O registro textual acima continua sendo confirmação informada pelo responsável, não um output capturado automaticamente.
+Em 24/10/2026, os prints enviados mostram a opção included e a conclusão bem-sucedida do notebook 00 no workspace. O commit 8eb90b2a78304b7661146e3a123cf948ed43ca4b contém 00 e 01 com outputs vazios; os hashes Git dos bytes foram conferidos. A preservação remota das execuções continua pendente. Exportar as saídas atuais antes de reexecutar ou sincronizar. Ver docs/rastreabilidade_execucoes.md. Os prints foram apenas inspecionados na conversa, não adicionados ao repositório.

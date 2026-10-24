@@ -6,7 +6,7 @@ Construção incremental: cada etapa passa por testes locais e validação no wo
 ## Situação
 
 - Etapa 1 validada pelo responsável no Databricks: Delta, MERGE, releitura e repetição sem duplicidade para a chave de teste.
-- Etapa 2 implementada: pacote Python, configuração, logs JSON, bootstrap dev e testes unitários. Execução no Databricks pendente.
+- Etapa 2 implementada: pacote Python, configuração, logs JSON, bootstrap dev e testes unitários. Evidência de execução no Databricks ainda pendente de verificação.
 - Dados sintéticos, Bronze, Prata/SCD2, Ouro e SQL analítico ainda não implementados.
 
 ## Executar a etapa 2 no Databricks
@@ -62,7 +62,7 @@ O trabalho atual está em `chore/estrutura-inicial`. Após validação, a integr
 
 ## Próximas etapas
 
-1. Validar o notebook 01 e confirmar suporte a Unity Catalog Volumes.
+1. Preservar as exportações de 00/01, validar a rastreabilidade e confirmar suporte a Unity Catalog Volumes.
 2. Definir contratos, gerar massa sintética determinística e validar arquivos no Volume.
 3. Implementar Bronze incremental, metadados e preservação de schema.
 4. Implementar qualidade, quarentena, MERGE e SCD2 na Prata, com testes de transformação.
@@ -73,3 +73,5 @@ Veja `docs/architecture.md`, `docs/decisions.md` e `docs/evidencias.md`.
 ## Evidências padronizadas
 
 Os outputs dos notebooks devem acompanhar os commits de validação. O repositório inclui `.databricks/commit_outputs`; é necessário habilitar o recurso no workspace e verificar o primeiro envio com resultados reais. Consulte `docs/preservacao_execucoes.md` antes de executar as próximas etapas. Esta configuração preserva checkpoints feitos por commit, e não todas as tentativas automaticamente.
+
+A investigação de 24/10/2026 confirmou outputs vazios no GitHub apesar de resultados visíveis no workspace. Antes de continuar, consulte `docs/rastreabilidade_execucoes.md` e preserve os notebooks por exportação com outputs. Histórico persistente em Delta/Volumes é uma proposta ainda não implementada.

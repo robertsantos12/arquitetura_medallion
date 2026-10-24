@@ -2,7 +2,7 @@
 
 ## Padrão adotado
 
-O arquivo `.databricks/commit_outputs` inclui os outputs dos notebooks em `notebooks/` e de `teste_ambiente.ipynb`, quando presente. O notebook executado e seu código ficam juntos no commit. Cada commit de evidência é um checkpoint: execuções que ocorrem entre commits não ficam arquivadas automaticamente. Esta configuração também não cria um histórico Delta de execuções ou armazena logs internos do cluster.
+O arquivo `.databricks/commit_outputs` está configurado para solicitar a inclusão de outputs dos notebooks em `notebooks/` e de `teste_ambiente.ipynb`, quando presente. A inclusão efetiva precisa ser verificada no arquivo remoto. Cada commit de evidência é um checkpoint: execuções que ocorrem entre commits não ficam arquivadas automaticamente. Esta configuração também não cria um histórico Delta de execuções ou armazena logs internos do cluster.
 
 A configuração do repositório depende de habilitação no workspace. A implementação só estará validada quando um commit feito no Databricks contiver outputs reais e for conferido no GitHub.
 
@@ -18,7 +18,11 @@ Os nomes podem variar conforme idioma/versão. Se não houver a opção, confirm
 
 Fonte: https://docs.databricks.com/aws/en/notebooks/notebook-format
 
-## Recuperar evidências das etapas iniciais
+## Incidente confirmado em 24/10/2026
+
+A interface mostra included e outputs do notebook 00, mas os blobs de 00 e 01 no commit 8eb90b2 têm outputs vazios. O hash dos bytes foi conferido. Não repetir habilitação ou reexecução sem preservar o estado atual. Primeiro exportar os dois notebooks com Include outputs e conferir os arquivos. Consulte [a investigação e o desenho proposto](rastreabilidade_execucoes.md).
+
+## Procedimento geral de commit (retomar após resolver a divergência)
 
 1. Habilite a opção do workspace.
 2. Na pasta Git, confirme a branch `chore/estrutura-inicial` e faça Pull para receber a configuração.
@@ -43,7 +47,7 @@ O notebook no estado atual guarda os resultados mais recentes; os commits anteri
 
 Use **File → Export → IPython notebook**, habilitando **Include outputs**. Guarde o arquivo executado em `docs/evidencias/etapa_XX/<timestamp_UTC>_<nome>.ipynb` e versione esse arquivo. HTML com outputs pode ser usado como cópia de leitura quando o ambiente permitir seu versionamento; IPYNB é a evidência canônica.
 
-Esta é uma alternativa, não uma segunda cópia obrigatória. Use-a somente se o caminho principal não estiver disponível.
+Esta é a rota imediata de recuperação enquanto a divergência entre workspace e GitHub estiver aberta. A cópia deve ser conferida antes de ser aceita como evidência.
 
 Fonte: https://docs.databricks.com/aws/en/notebooks/notebook-export-import
 
