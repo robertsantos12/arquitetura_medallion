@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Credenciais e configuração local
+.env
+.env.*
+!.env.example
+.databrickscfg
+.databricks/
+*.pem
+*.key
+
+# Dados gerados e saídas locais
+/data/
+/artifacts/
+/spark-warehouse/
+/metastore_db/
+derby.log
+
+# Editor e sistema
+.vscode/
+.idea/
+.DS_Store
