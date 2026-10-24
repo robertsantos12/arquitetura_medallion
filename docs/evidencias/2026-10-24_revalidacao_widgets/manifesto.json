@@ -1,0 +1,74 @@
+{
+  "coleta_em": "2026-10-24T18:59:46.261086+00:00",
+  "proveniencia": "Exports com outputs fornecidos pelo usuario; revisao estatica, sem consulta direta ao Databricks.",
+  "nova_sessao_python": "Nao comprovada pelos exports; confirmar com o operador.",
+  "resultados_rastreabilidade": [
+    {
+      "run_id": "4794325f-b6bd-466a-bb10-67ff31d24cc9",
+      "status": "SUCESSO",
+      "eventos": 3,
+      "codigo_sha256": "ef693dbac8b551516101baa1e2c7f029c08d970cd9e2feabd3480c1ca69d6a20",
+      "hashes_verificados": true
+    },
+    {
+      "run_id": "c6b2a18b-2fb9-43e6-8fbc-4f7ee936ed5a",
+      "status": "SUCESSO",
+      "eventos": 3,
+      "codigo_sha256": "ef693dbac8b551516101baa1e2c7f029c08d970cd9e2feabd3480c1ca69d6a20",
+      "hashes_verificados": true
+    },
+    {
+      "run_id": "66b44661-a153-4354-ba64-a2489341aa34",
+      "status": "FALHOU",
+      "eventos": 3,
+      "codigo_sha256": "ef693dbac8b551516101baa1e2c7f029c08d970cd9e2feabd3480c1ca69d6a20",
+      "hashes_verificados": true
+    }
+  ],
+  "arquivos": [
+    {
+      "arquivo": "00_validar_delta.ipynb.json",
+      "upload_original": "00_validar_delta(1).ipynb",
+      "original_sha256": "58a6d1c41134d4ec6ec004711457773bcb19303300f5364b77180857c0b7da80",
+      "publicado_sha256": "98a9dc94ebd67386771b8177d05e00a147e2abb1376435e238e6f5ea89875a22",
+      "codigo_igual_ao_repositorio": true,
+      "celulas_com_outputs": 3,
+      "redacoes_caminhos": 0,
+      "redacoes_emails": 0,
+      "metadados_databricks_removidos": true
+    },
+    {
+      "arquivo": "01_preparar_projeto.ipynb.json",
+      "upload_original": "01_preparar_projeto(1).ipynb",
+      "original_sha256": "ba1c4b58fa02cd1cde5487e0ff163dda1ce63b7c753af918d81f060338baa0ff",
+      "publicado_sha256": "cce7dcc841d28ad4727eaa440af84318d5297078cb54b6cb50489c8475a776f9",
+      "codigo_igual_ao_repositorio": true,
+      "celulas_com_outputs": 4,
+      "redacoes_caminhos": 1,
+      "redacoes_emails": 0,
+      "metadados_databricks_removidos": true
+    },
+    {
+      "arquivo": "02_validar_rastreabilidade.ipynb.json",
+      "upload_original": "02_validar_rastreabilidade.ipynb",
+      "original_sha256": "f3a5e70a5744a036c6b449731cb7f1d1c3de311650a4057b0e4b95e1797694ba",
+      "publicado_sha256": "6194f849f5b98547223a7a127184295770f99f2f789f3e0138f6dff242ad0bb3",
+      "codigo_igual_ao_repositorio": true,
+      "celulas_com_outputs": 2,
+      "redacoes_caminhos": 0,
+      "redacoes_emails": 0,
+      "metadados_databricks_removidos": true
+    },
+    {
+      "arquivo": "03_reler_evidencias.ipynb.json",
+      "upload_original": "03_reler_evidencias.ipynb",
+      "original_sha256": "cbf8e04830e4ebf21f83afdbffc8e518c0203a35a4f5271fc6f31809717dfe7e",
+      "publicado_sha256": "3d08905f9f6cb391eab0b439883caf20f913900eb4bd6ca612abfbfe1946e366",
+      "codigo_igual_ao_repositorio": true,
+      "celulas_com_outputs": 2,
+      "redacoes_caminhos": 0,
+      "redacoes_emails": 0,
+      "metadados_databricks_removidos": true
+    }
+  ]
+}
