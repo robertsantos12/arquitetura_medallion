@@ -1,0 +1,128 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Etapa 2 — Preparar a estrutura do projeto\n",
+        "Execute todas as células na pasta Git do Databricks, na branch `chore/estrutura-inicial`.\n",
+        "\n",
+        "Esta etapa importa o pacote Python, valida parâmetros e cria/verifica cinco schemas dev. Não cria tabelas nem volumes. O path mostrado é planejado; acesso a arquivos será validado na próxima etapa. Não é necessário instalar bibliotecas.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from pathlib import Path\n",
+        "import sys\n",
+        "\n",
+        "atual = Path.cwd().resolve()\n",
+        "candidatos = [atual, *atual.parents]\n",
+        "raiz = next(\n",
+        "    (p for p in candidatos if (p / \"src\" / \"medallion\" / \"__init__.py\").is_file()\n",
+        "     and (p / \"pyproject.toml\").is_file()),\n",
+        "    None,\n",
+        ")\n",
+        "if raiz is None:\n",
+        "    raise RuntimeError(\n",
+        "        \"Não encontrei a raiz do repositório. Abra este notebook dentro da pasta Git \"\n",
+        "        \"e confirme que src/medallion e pyproject.toml vieram no Pull. \"\n",
+        "        \"Se necessário, use %cd com o caminho da pasta Git e execute novamente.\"\n",
+        "    )\n",
+        "src = str(raiz / \"src\")\n",
+        "if src not in sys.path:\n",
+        "    sys.path.insert(0, src)\n",
+        "\n",
+        "from medallion.config import PipelineConfig\n",
+        "from medallion.bootstrap import preparar_ambiente\n",
+        "\n",
+        "print(\"Pacote medallion importado de:\", raiz)\n",
+        "\n"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Pacote medallion importado de: [CAMINHO_PESSOAL_REMOVIDO]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "dbutils.widgets.text(\"catalogo\", spark.catalog.currentCatalog())\n",
+        "dbutils.widgets.dropdown(\"modo\", \"incremental\", [\"incremental\", \"reprocessamento\"])\n",
+        "dbutils.widgets.text(\"data_referencia\", \"\")\n",
+        "dbutils.widgets.text(\"batch_id\", \"\")\n",
+        "dbutils.widgets.text(\"raiz_arquivos\", \"\")\n",
+        "\n",
+        "parametros = {\n",
+        "    \"ambiente\": \"dev\",\n",
+        "    \"catalogo\": dbutils.widgets.get(\"catalogo\").strip(),\n",
+        "    \"modo\": dbutils.widgets.get(\"modo\"),\n",
+        "    \"data_referencia\": dbutils.widgets.get(\"data_referencia\").strip() or None,\n",
+        "    \"raiz_arquivos\": dbutils.widgets.get(\"raiz_arquivos\").strip() or None,\n",
+        "}\n",
+        "batch_id = dbutils.widgets.get(\"batch_id\").strip()\n",
+        "if batch_id:\n",
+        "    parametros[\"batch_id\"] = batch_id\n",
+        "\n",
+        "config = PipelineConfig(**parametros)\n",
+        "print(\"Ambiente:\", config.ambiente)\n",
+        "print(\"Catálogo:\", config.catalogo)\n",
+        "print(\"Batch:\", config.batch_id)\n",
+        "print(\"Entrada planejada (ainda não validada):\", config.caminho_entrada)\n",
+        "\n"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Ambiente: dev\nCatálogo: workspace\nBatch: 29fdc011-a9fb-4a04-8c4a-53eda34c9020\nEntrada planejada (ainda não validada): /Volumes/workspace/medallion_dev_landing/arquivos\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "schemas = preparar_ambiente(spark, config)\n",
+        "\n",
+        "print(\"ESTRUTURA DO PROJETO: OK\")\n",
+        "print(\"Pacote Python: importado\")\n",
+        "print(\"Configuração: validada\")\n",
+        "print(f\"Ambiente: {config.ambiente}\")\n",
+        "print(f\"Catálogo: {config.catalogo}\")\n",
+        "for schema in schemas:\n",
+        "    print(f\"Schema disponível: {schema}\")\n",
+        "print(\"Próxima etapa: contratos, Volume e dados sintéticos.\")\n",
+        "\n"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "{\"timestamp\": \"2026-10-24T17:11:22.449432+00:00\", \"nivel\": \"INFO\", \"evento\": \"bootstrap_iniciado\", \"batch_id\": \"29fdc011-a9fb-4a04-8c4a-53eda34c9020\", \"ambiente\": \"dev\"}\n{\"timestamp\": \"2026-10-24T17:11:23.365564+00:00\", \"nivel\": \"INFO\", \"evento\": \"schema_disponivel\", \"batch_id\": \"29fdc011-a9fb-4a04-8c4a-53eda34c9020\", \"ambiente\": \"dev\", \"schema\": \"`workspace`.`medallion_dev_landing`\"}\n{\"timestamp\": \"2026-10-24T17:11:24.065274+00:00\", \"nivel\": \"INFO\", \"evento\": \"schema_disponivel\", \"batch_id\": \"29fdc011-a9fb-4a04-8c4a-53eda34c9020\", \"ambiente\": \"dev\", \"schema\": \"`workspace`.`medallion_dev_bronze`\"}\n{\"timestamp\": \"2026-10-24T17:11:24.743376+00:00\", \"nivel\": \"INFO\", \"evento\": \"schema_disponivel\", \"batch_id\": \"29fdc011-a9fb-4a04-8c4a-53eda34c9020\", \"ambiente\": \"dev\", \"schema\": \"`workspace`.`medallion_dev_prata`\"}\n{\"timestamp\": \"2026-10-24T17:11:25.434271+00:00\", \"nivel\": \"INFO\", \"evento\": \"schema_disponivel\", \"batch_id\": \"29fdc011-a9fb-4a04-8c4a-53eda34c9020\", \"ambiente\": \"dev\", \"schema\": \"`workspace`.`medallion_dev_ouro`\"}\n{\"timestamp\": \"2026-10-24T17:11:26.136186+00:00\", \"nivel\": \"INFO\", \"evento\": \"schema_disponivel\", \"batch_id\": \"29fdc011-a9fb-4a04-8c4a-53eda34c9020\", \"ambiente\": \"dev\", \"schema\": \"`workspace`.`medallion_dev_controle`\"}\n{\"timestamp\": \"2026-10-24T17:11:26.137046+00:00\", \"nivel\": \"INFO\", \"evento\": \"bootstrap_concluido\", \"batch_id\": \"29fdc011-a9fb-4a04-8c4a-53eda34c9020\", \"ambiente\": \"dev\"}\nESTRUTURA DO PROJETO: OK\nPacote Python: importado\nConfiguração: validada\nAmbiente: dev\nCatálogo: workspace\nSchema disponível: `workspace`.`medallion_dev_landing`\nSchema disponível: `workspace`.`medallion_dev_bronze`\nSchema disponível: `workspace`.`medallion_dev_prata`\nSchema disponível: `workspace`.`medallion_dev_ouro`\nSchema disponível: `workspace`.`medallion_dev_controle`\nPróxima etapa: contratos, Volume e dados sintéticos.\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

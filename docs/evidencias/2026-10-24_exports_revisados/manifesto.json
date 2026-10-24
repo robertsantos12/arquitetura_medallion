@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "preparado_em_utc": "2026-10-24T17:48:08.338028+00:00",
+  "origem": "Exportações manuais do Databricks enviadas pelo responsável",
+  "publicacao_autorizada": "Cópias sem e-mail e caminhos pessoais em robertsantos12/arquitetura_medallion",
+  "escopo": "Outputs preservados com remoções explicitadas; metadados de conta/workspace removidos. Estas cópias não são os bytes originais. Horário desta preparação não é horário de execução.",
+  "arquivos": [
+    {
+      "arquivo": "00_validar_delta.ipynb.json",
+      "sha256_recebido": "a071a96664ee870c8fbe6e79349493e7f6754843537f6de56b4c9cd3ae01c63f",
+      "sha256_publicado": "6a72aa2d31b6dc8b24b92a1a623f6beafe1b734aea01d7ae204acb796a97318e",
+      "codigo_das_celulas_preservado": true,
+      "alteracoes": {
+        "metadados_databricks_removidos": true,
+        "emails": 0,
+        "caminhos_pessoais": 0
+      }
+    },
+    {
+      "arquivo": "01_preparar_projeto.ipynb.json",
+      "sha256_recebido": "d030c124c23a1cecb1453711ad8c201f321d9ee8b41e728a3a917425f411d0b1",
+      "sha256_publicado": "adc1169c3defeed20fc82ba4636d4f3696b513a2fd4c6342673995206f97f074",
+      "codigo_das_celulas_preservado": true,
+      "alteracoes": {
+        "metadados_databricks_removidos": true,
+        "emails": 0,
+        "caminhos_pessoais": 1
+      }
+    }
+  ]
+}

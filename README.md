@@ -7,7 +7,7 @@ Construção incremental: cada etapa passa por testes locais e validação no wo
 
 - Etapa 1 validada pelo responsável no Databricks: Delta, MERGE, releitura e repetição sem duplicidade para a chave de teste.
 - Etapa 2 validada nos exports recebidos: pacote Python, configuração, logs e cinco schemas dev.
-- Etapa 2B implementada: eventos Delta e evidências em Volume; integração aguarda execução de 02/03.
+- Etapa 2B: execução de 02 confirmada pelo output do responsável; releitura independente com 03 pendente.
 - Dados sintéticos, Bronze, Prata/SCD2, Ouro e SQL analítico ainda não implementados.
 
 ## Executar a etapa 2 no Databricks
@@ -63,7 +63,7 @@ O trabalho atual está em `chore/estrutura-inicial`. Após validação, a integr
 
 ## Próximas etapas
 
-1. Executar 02_validar_rastreabilidade e 03_reler_evidencias para validar Delta + Volume.
+1. Executar 03_reler_evidencias em nova sessão usando os run_ids do 02.
 2. Definir contratos, gerar massa sintética determinística e validar arquivos no Volume.
 3. Implementar Bronze incremental, metadados e preservação de schema.
 4. Implementar qualidade, quarentena, MERGE e SCD2 na Prata, com testes de transformação.
@@ -79,4 +79,4 @@ A investigação de 24/10/2026 confirmou outputs vazios no GitHub apesar de resu
 
 ## Próxima execução — etapa 2B
 
-Faça Pull e execute `notebooks/02_validar_rastreabilidade.ipynb`. Ele registra duas tentativas de sucesso e uma falha controlada, preservadas separadamente. Depois use os três run_ids no notebook `03_reler_evidencias.ipynb`, em nova sessão Python. Instruções: `docs/rastreabilidade_implementacao.md`. Foram aprovados 17 testes locais; as integrações Delta e Volume ainda precisam dessa execução.
+Faça Pull e execute `notebooks/02_validar_rastreabilidade.ipynb`. Ele registra duas tentativas de sucesso e uma falha controlada, preservadas separadamente. Depois use os três run_ids no notebook `03_reler_evidencias.ipynb`, em nova sessão Python. Instruções: `docs/rastreabilidade_implementacao.md`. Foram aprovados 17 testes locais; as integrações Delta e Volume tiveram execução confirmada no 02; falta a releitura em nova sessão com 03.

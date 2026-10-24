@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "origem": "Output do notebook 02 copiado pelo responsável para a conversa",
+  "tipo_evidencia": "resultado_informado_pelo_executor",
+  "notebook": "notebooks/02_validar_rastreabilidade.ipynb",
+  "marcador": "RASTREABILIDADE: OK",
+  "run_ids": [
+    "ec5184e8-391e-48d6-85f8-bba4469c80fc",
+    "9cd7a47d-d9e9-48e9-a994-bf2492f0edd8",
+    "89a8796d-d17d-4fee-ab99-83f76a870495"
+  ],
+  "codigo_sha256_informado": "ef693dbac8b551516101baa1e2c7f029c08d970cd9e2feabd3480c1ca69d6a20",
+  "tentativas": [
+    {
+      "run_id": "ec5184e8-391e-48d6-85f8-bba4469c80fc",
+      "status": "SUCESSO",
+      "eventos": 3,
+      "hashes_verificados_informado": true
+    },
+    {
+      "run_id": "9cd7a47d-d9e9-48e9-a994-bf2492f0edd8",
+      "status": "SUCESSO",
+      "eventos": 3,
+      "hashes_verificados_informado": true
+    },
+    {
+      "run_id": "89a8796d-d17d-4fee-ab99-83f76a870495",
+      "status": "FALHOU",
+      "eventos": 3,
+      "hashes_verificados_informado": true,
+      "falha_controlada_esperada": true
+    }
+  ],
+  "limitacoes": [
+    "Sem acesso direto da IA ao Delta ou Volume; registro baseado no output enviado.",
+    "Releitura em nova sessão pelo notebook 03 ainda pendente.",
+    "Este JSON não é uma exportação do notebook 02 nem substitui seus artefatos persistidos."
+  ]
+}
