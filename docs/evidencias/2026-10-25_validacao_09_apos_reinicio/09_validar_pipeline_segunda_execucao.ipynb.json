@@ -1,0 +1,101 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Validação de homologação somente leitura\n",
+        "\n",
+        "Branch `chore/estrutura-inicial`. Faça Pull e use uma sessão Python nova para carregar os módulos atualizados. Não reexecute 00–05 nem regenere a massa. Não acrescente reinício dentro de Run all.\n",
+        "\n",
+        "Status: implementado e testado localmente; integração Databricks pendente de seus outputs. Consulte `docs/homologacao_domingo.md`.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Preencha os widgets antes de executar os próximos CMDs. Run all não pausa para preenchimento.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 1 — Execute somente este CMD, preencha os campos e depois prossiga.\n",
+        "# catalogo: Catálogo Unity Catalog já validado. Valor recomendado: workspace.\n",
+        "dbutils.widgets.text('catalogo','workspace')\n",
+        "# data_referencia: Data BASE do cenário V2 existente; não é hoje. Valor recomendado: 2026-01-15.\n",
+        "dbutils.widgets.text('data_referencia','2026-01-15')\n",
+        "# snapshot_silver: Cole o SHA256 do 06. Valor recomendado: preencher.\n",
+        "dbutils.widgets.text('snapshot_silver','')\n",
+        "# snapshot_gold: Cole o SHA256 do 07. Valor recomendado: preencher.\n",
+        "dbutils.widgets.text('snapshot_gold','')\n",
+        "# data_corte: Use o mesmo corte do 07; precisa incluir todos os casos V1. Valor recomendado: 2026-05-31.\n",
+        "dbutils.widgets.text('data_corte','2026-05-31')\n",
+        "print(\"Preencha os widgets antes de executar os próximos CMDs. Run all não pausa para preenchimento.\")\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "# CMD 2 — Localizar o pacote atualizado. Execute dentro da pasta Git.\n",
+        "from pathlib import Path\n",
+        "import sys\n",
+        "atual=Path.cwd().resolve()\n",
+        "raiz=next((p for p in [atual,*atual.parents] if (p/'src/medallion').is_dir() and (p/'pyproject.toml').is_file()),None)\n",
+        "if raiz is None: raise RuntimeError(\"Abra o notebook dentro da pasta Git\")\n",
+        "if str(raiz/'src') not in sys.path: sys.path.insert(0,str(raiz/'src'))\n",
+        "from medallion.config import PipelineConfig\n",
+        "config=PipelineConfig(catalogo=dbutils.widgets.get('catalogo').strip(),data_referencia=dbutils.widgets.get('data_referencia').strip())\n",
+        "spark.conf.set('spark.sql.session.timeZone','UTC')\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "VALIDAÇÃO FINAL: OK\n{'bronze': {'clientes_cdc': {'linhas_lidas': 24, 'inseridas': 0, 'existentes': 24, 'arquivos': 3}, 'contas_cdc': {'linhas_lidas': 23, 'inseridas': 0, 'existentes': 23, 'arquivos': 2}, 'cartoes_cdc': {'linhas_lidas': 24, 'inseridas': 0, 'existentes': 24, 'arquivos': 2}, 'transacoes': {'linhas_lidas': 12158, 'inseridas': 0, 'existentes': 12158, 'arquivos': 125}, 'eventos_risco': {'linhas_lidas': 4, 'inseridas': 0, 'existentes': 4, 'arquivos': 2}, 'estornos': {'linhas_lidas': 4, 'inseridas': 0, 'existentes': 4, 'arquivos': 3}}, 'silver': {'clientes_cdc': 22, 'contas_cdc': 22, 'cartoes_cdc': 23, 'transacoes': 12153, 'eventos_risco': 3, 'estornos': 3, 'quarentena': 8}, 'gold': {'gold_fato_transacao': 12153, 'gold_cliente_mes': 94, 'gold_indicadores_risco': 12153, 'gold_features_cliente': 20, 'gold_dim_cliente': 22, 'gold_dim_conta': 22, 'gold_dim_cartao': 23, 'gold_dim_estabelecimento': 11}, 'oraculo_v1': '2270.00'}\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 3 — Executar o módulo e conferir o resultado. Preserve erros; não apague tabelas.\n",
+        "from medallion.pipeline.validate import validar\n",
+        "resultado=validar(spark,config,dbutils.widgets.get('snapshot_silver').strip(),dbutils.widgets.get('snapshot_gold').strip(),dbutils.widgets.get('data_corte').strip())\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Coleta\n",
+        "\n",
+        "Exporte IPYNB com outputs, confira os resultados e faça commit/push na branch chore/estrutura-inicial. Envie export e SHA antes de avançar. Nunca confunda saída local com validação Databricks. Snapshots antigos e evidências são preservados. Se ocorrer erro, interrompa e preserve o output.\n"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
