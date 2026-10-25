@@ -1,0 +1,73 @@
+{
+  "proveniencia": "Export real enviado pelo operador após aplicação de metadados Gold; revisão sem acesso direto ao Databricks.",
+  "resultado_identico_antes_metadados": true,
+  "parametros": {
+    "catalogo": "workspace",
+    "data_corte": "2026-05-31",
+    "data_referencia": "2026-01-15",
+    "snapshot_gold": "c10836cdceb0fd89a0c952aab2ffbcab8e9250f2b559cf3a50cd9c91d15c4a0d",
+    "snapshot_silver": "0958871b64ea5719e3ab4137a5867ad0962a8894a5e89a21dffde60657d92d13"
+  },
+  "resultado": {
+    "bronze": {
+      "clientes_cdc": {
+        "linhas_lidas": 24,
+        "inseridas": 0,
+        "existentes": 24,
+        "arquivos": 3
+      },
+      "contas_cdc": {
+        "linhas_lidas": 23,
+        "inseridas": 0,
+        "existentes": 23,
+        "arquivos": 2
+      },
+      "cartoes_cdc": {
+        "linhas_lidas": 24,
+        "inseridas": 0,
+        "existentes": 24,
+        "arquivos": 2
+      },
+      "transacoes": {
+        "linhas_lidas": 12158,
+        "inseridas": 0,
+        "existentes": 12158,
+        "arquivos": 125
+      },
+      "eventos_risco": {
+        "linhas_lidas": 4,
+        "inseridas": 0,
+        "existentes": 4,
+        "arquivos": 2
+      },
+      "estornos": {
+        "linhas_lidas": 4,
+        "inseridas": 0,
+        "existentes": 4,
+        "arquivos": 3
+      }
+    },
+    "silver": {
+      "clientes_cdc": 22,
+      "contas_cdc": 22,
+      "cartoes_cdc": 23,
+      "transacoes": 12153,
+      "eventos_risco": 3,
+      "estornos": 3,
+      "quarentena": 8
+    },
+    "gold": {
+      "gold_fato_transacao": 12153,
+      "gold_cliente_mes": 94,
+      "gold_indicadores_risco": 12153,
+      "gold_features_cliente": 20,
+      "gold_dim_cliente": 22,
+      "gold_dim_conta": 22,
+      "gold_dim_cartao": 23,
+      "gold_dim_estabelecimento": 11
+    },
+    "oraculo_v1": "2270.00"
+  },
+  "original_sha256": "95662b6e31e9d6a86788309bf5a315b78a1204c9c2e2940df9b4302a776b0f68",
+  "publicado_sha256": "df35634bdfe258c2683919b3657090f6d1ce5f9666d0bc71bfec04bbe4f3fdf4"
+}
