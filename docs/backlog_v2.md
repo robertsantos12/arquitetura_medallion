@@ -57,3 +57,8 @@ Referência completa: matriz_requisitos_pdf.md (seções 1–10 e Git). V2 aqui 
 |P2 análise|Calendário/pares|Densificar meses vazios, pares sem incluir o próprio cliente, ampliar amostra e critérios de anomalia.|
 
 O backlog não dispensa requisitos obrigatórios. Metadados Bronze P0 são lacuna da entrega inicial, não opcional. A linhagem visual adicional é bloqueio distinto; nenhum teste/merge deve apresentá-la como aprovada. Fontes, planos e toda evidência anterior permanecem preservados.
+
+
+## Complemento aditivo de metadados — notebook 13
+
+Implementadas seis views raw_*_contrato_v2 no módulo bronze/metadata.py, sem alteração das raw. Exposição dos nomes exigidos, SHA256 do payload, versão do manifesto e batch_id lógico derivado por cenário/data/lote com proveniência explícita. O batch_id UUID configurado no 05 não é recuperável pela evidência disponível e não foi inventado. Ver docs/bronze_metadados.md. Código e 43 testes locais aprovados; integração do 13 ainda PENDENTE. Até receber os outputs, manter a lacuna em revisão. Após validação, contrato lógico em views deve ser distinguido de materialização física e do UUID legado original; não declarar estes últimos implementados. Próxima etapa: Pull, executar 13 uma vez, exportar e revisar antes de aprovar o PR.

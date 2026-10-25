@@ -51,3 +51,8 @@ Legenda: VALIDADO = outputs reais fornecidos pelo operador; TESTADO = teste loca
 ## Conclusão da revisão
 
 O fluxo de dados e os complementos de governança 10/11 têm outputs reais. Não declarar 100% de aderência: metadados obrigatórios Bronze permanecem parciais; formato privado/compactado, revisão de informações sensíveis e preparação de defesa ainda precisam fechamento. A linhagem visual é melhoria adicional bloqueada, não deve ser usada para desqualificar a validação financeira nem apresentada como concluída.
+
+
+## Complemento aditivo de metadados — notebook 13
+
+Implementadas seis views raw_*_contrato_v2 no módulo bronze/metadata.py, sem alteração das raw. Exposição dos nomes exigidos, SHA256 do payload, versão do manifesto e batch_id lógico derivado por cenário/data/lote com proveniência explícita. O batch_id UUID configurado no 05 não é recuperável pela evidência disponível e não foi inventado. Ver docs/bronze_metadados.md. Código e 43 testes locais aprovados; integração do 13 ainda PENDENTE. Até receber os outputs, manter a lacuna em revisão. Após validação, contrato lógico em views deve ser distinguido de materialização física e do UUID legado original; não declarar estes últimos implementados. Próxima etapa: Pull, executar 13 uma vez, exportar e revisar antes de aprovar o PR.
