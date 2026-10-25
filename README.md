@@ -1,14 +1,17 @@
 # NovaRota — Lakehouse Databricks/Delta
 
-Case sênior com massa fictícia V2 temática de Chaves, Bronze incremental e preparação de Silver/Gold/SQL para homologação.
+Case sênior com massa fictícia V2 temática de Chaves, Bronze incremental, Silver/Gold/SQL homologados por exports e governança documentada.
 
 ## Estado real
 
 - 00–05: validados anteriormente pelo operador; exports em docs/evidencias. Massa V2 e schemas Bronze preservados nesta revisão.
-- 06–09: implementados; **34 testes locais aprovados**. Integração no Databricks ainda PENDENTE. Não existem outputs Databricks novos nesta entrega.
+- 06–09: outputs reais revisados; 09 passou antes/depois do reinício e após metadados. Bronze: 12.158 transações; Silver/Gold: 12.153; quarentena: 8; oráculo V1: R$2.270,00.
+- 10/11: descrições das oito tabelas, 98 descrições de colunas, PKs e tags confirmadas nos outputs.
+- 12: linhagem declarada bloqueada por ausência de CREATE EXTERNAL METADATA no metastore; não validada visualmente.
+- **40 testes locais aprovados** na revisão de fechamento; testes com dublês não substituem integração real.
 - Trabalho apenas em `chore/estrutura-inicial`; sem merge em develop/main.
 
-## Homologar às 11h de domingo
+## Executar ou reproduzir a homologação
 
 Siga [docs/homologacao_domingo.md](docs/homologacao_domingo.md), um notebook por vez. Faça Pull e use Python novo. **Não regenere a massa nem reexecute 00–05.**
 
@@ -29,7 +32,7 @@ Transformações em src/medallion/{quality,silver,gold}; persistência, SQL e ex
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 ```
 
-Os testes cobrem fixture V1/V2 serializada, SCD2 atrasado, conflitos, qualidade, recusas, estornos, corte temporal, oráculo V1=R$2.270, determinismo e protocolo de snapshots com dublê. O dublê não substitui Spark/Delta. SQL/EXPLAIN precisam do Databricks.
+Os testes cobrem fixture V1/V2 serializada, SCD2 atrasado, conflitos, qualidade, recusas, estornos, corte temporal, oráculo V1=R$2.270, determinismo e protocolo de snapshots com dublê. O dublê não substitui Spark/Delta. SQL/EXPLAIN foram executados no Databricks conforme export 08; perfil detalhado de performance não foi medido.
 
 ## Decisões e limites
 
@@ -37,4 +40,8 @@ Silver/Gold são snapshots Delta imutáveis: MERGE insert-only e marcador de com
 
 Contratos financeiros e temporais: [docs/contrato_homologacao.md](docs/contrato_homologacao.md). Grãos, governança e operação: [docs/homologacao_domingo.md](docs/homologacao_domingo.md). Bloqueios e limitações: [docs/backlog_v2.md](docs/backlog_v2.md). Revisão de baseline: [docs/revisao_homologacao.md](docs/revisao_homologacao.md).
 
-O formato final exigido no PDF é repositório privado ou pacote compactado. Preparação da entrega final e validação real seguem pendentes; não foi alterada a visibilidade do repositório.
+O formato final exigido no PDF é repositório privado ou pacote compactado. Preparação do pacote final segue pendente; não foi alterada a visibilidade do repositório. A revisão não declara aderência integral: metadados Bronze obrigatórios estão parciais.
+
+## Fechamento e integração
+
+Consulte [matriz de requisitos do PDF](docs/matriz_requisitos_pdf.md), [roteiro de entrega e PRs](docs/roteiro_entrega.md) e [backlog V2](docs/backlog_v2.md). Primeiro PR chore/estrutura-inicial → develop; depois develop → main, mediante revisão. Nenhum merge é implantação de produção. Pacote privado/ZIP, varredura final de dados pessoais e decisão sobre lacunas obrigatórias precedem a entrega.
