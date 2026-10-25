@@ -32,7 +32,7 @@ Legenda: VALIDADO = outputs reais fornecidos pelo operador; TESTADO = teste loca
 |6 SQL|MERGE SQL/PySpark|VALIDADO: Bronze/snapshots|Não confundir com atomicidade multi-tabela|
 |7|Módulos, separação, notebooks finos|IMPLEMENTADO: src/medallion, tests, sql, notebooks|11/12 complementam governança, não substituem camadas|
 |7|Logs, exceções e parametrização|VALIDADO/DOCUMENTADO: AuditRun 06/07, controles, erros propagados|Dev limitado por segurança; Gold não tem implantação prod; enriquecer observabilidade de todas as etapas em evolução|
-|7|Testes unitários e transformação|TESTADO: 40 testes locais no fechamento, incluindo regras e dublês de persistência/API|Dublês não são integração Databricks; outputs reais separados|
+|7|Testes unitários e transformação|TESTADO: 43 testes locais no fechamento, incluindo regras e dublês de persistência/API|Dublês não são integração Databricks; outputs reais separados|
 |8|Particionamento/clustering/OPTIMIZE|DOCUMENTADO: sem partições no volume pequeno, critérios em particionamento_e_streaming.md|Não exige aplicar otimização desnecessária; medir bytes/arquivos antes de mudar layout|
 |8|Arquivos pequenos/crescimento|DOCUMENTADO: evitar alta cardinalidade, compactação por métricas|Benchmark e automação em evolução|
 |8|Monitorar falhas/volume/qualidade|IMPLEMENTADO/DOCUMENTADO: auditoria, recontagens, quarentena|Dashboard, alertas/SLAs automatizados em evolução|
@@ -55,4 +55,9 @@ O fluxo de dados e os complementos de governança 10/11 têm outputs reais. Não
 
 ## Complemento aditivo de metadados — notebook 13
 
-Implementadas seis views raw_*_contrato_v2 no módulo bronze/metadata.py, sem alteração das raw. Exposição dos nomes exigidos, SHA256 do payload, versão do manifesto e batch_id lógico derivado por cenário/data/lote com proveniência explícita. O batch_id UUID configurado no 05 não é recuperável pela evidência disponível e não foi inventado. Ver docs/bronze_metadados.md. Código e 43 testes locais aprovados; integração do 13 ainda PENDENTE. Até receber os outputs, manter a lacuna em revisão. Após validação, contrato lógico em views deve ser distinguido de materialização física e do UUID legado original; não declarar estes últimos implementados. Próxima etapa: Pull, executar 13 uma vez, exportar e revisar antes de aprovar o PR.
+Implementadas seis views raw_*_contrato_v2 no módulo bronze/metadata.py, sem alteração das raw. Exposição dos nomes exigidos, SHA256 do payload, versão do manifesto e batch_id lógico derivado por cenário/data/lote com proveniência explícita. O batch_id UUID configurado no 05 não é recuperável pela evidência disponível e não foi inventado. Ver docs/bronze_metadados.md. Código e 43 testes locais aprovados; integração do contrato lógico do 13 VALIDADA pelo export recebido. Evidência em docs/evidencias/2026-10-25_metadados_bronze_13. Após validação, contrato lógico em views deve ser distinguido de materialização física e do UUID legado original; não declarar estes últimos implementados. Próxima etapa: atualizar a descrição do PR com a solução por views e revisar para integração em develop.
+
+
+## Resultado da validação 13 — 25/10/2026
+
+CONTRATO LÓGICO VALIDADO: seis views com nomes de metadados do PDF, SHA256 do payload, versão do manifesto e batch_id lógico derivado. Contagens 24/23/24/12158/4/4 coincidem com a Bronze. A pendência de implementação/execução do complemento foi encerrada por output real. Não afirmar materialização física nas raw nem recuperação do batch UUID original; essa limitação permanece declarada. As avaliações anteriores de pendência descrevem o estado antes deste complemento. PR pode seguir para revisão com essa decisão explícita. A linhagem 12 permanece bloqueada e o pacote/revisão final de conteúdo continuam pendentes.

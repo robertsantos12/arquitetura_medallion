@@ -8,7 +8,8 @@ Case sênior com massa fictícia V2 temática de Chaves, Bronze incremental, Sil
 - 06–09: outputs reais revisados; 09 passou antes/depois do reinício e após metadados. Bronze: 12.158 transações; Silver/Gold: 12.153; quarentena: 8; oráculo V1: R$2.270,00.
 - 10/11: descrições das oito tabelas, 98 descrições de colunas, PKs e tags confirmadas nos outputs.
 - 12: linhagem declarada bloqueada por ausência de CREATE EXTERNAL METADATA no metastore; não validada visualmente.
-- **40 testes locais aprovados** na revisão de fechamento; testes com dublês não substituem integração real.
+- **43 testes locais aprovados** na revisão de fechamento; testes com dublês não substituem integração real.
+- 13: contrato Bronze em seis views validado, com contagens reconciliadas e campos derivados conferidos.
 - Trabalho apenas em `chore/estrutura-inicial`; sem merge em develop/main.
 
 ## Executar ou reproduzir a homologação
@@ -40,7 +41,7 @@ Silver/Gold são snapshots Delta imutáveis: MERGE insert-only e marcador de com
 
 Contratos financeiros e temporais: [docs/contrato_homologacao.md](docs/contrato_homologacao.md). Grãos, governança e operação: [docs/homologacao_domingo.md](docs/homologacao_domingo.md). Bloqueios e limitações: [docs/backlog_v2.md](docs/backlog_v2.md). Revisão de baseline: [docs/revisao_homologacao.md](docs/revisao_homologacao.md).
 
-O formato final exigido no PDF é repositório privado ou pacote compactado. Preparação do pacote final segue pendente; não foi alterada a visibilidade do repositório. A revisão não declara aderência integral: metadados Bronze obrigatórios estão parciais.
+O formato final exigido no PDF é repositório privado ou pacote compactado. Preparação do pacote final segue pendente; não foi alterada a visibilidade do repositório. O contrato lógico de metadados Bronze foi validado pelo 13 em seis views persistentes. As raw permanecem sem novas colunas físicas; batch_id é derivado por lote legado, não o UUID original configurado. Essa ressalva permanece na matriz e na defesa.
 
 ## Fechamento e integração
 
