@@ -1,0 +1,104 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 10 — Documentar tabelas Gold\n",
+        "\n",
+        "Executar após 09. Atualiza apenas descrições das oito tabelas, sem reprocessar dados. Exige permissão para alterar metadados. Confira o catálogo antes de prosseguir.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Preencha catalogo e depois execute os demais CMDs.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 1 — catalogo=workspace: catálogo das tabelas Gold já homologadas.\n",
+        "dbutils.widgets.text('catalogo','workspace')\n",
+        "print('Preencha catalogo e depois execute os demais CMDs.')\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "gold_fato_transacao snapshot_id + id_transacao\ngold_cliente_mes snapshot_id + id_cliente + mes\ngold_indicadores_risco snapshot_id + id_transacao\ngold_features_cliente snapshot_id + id_cliente + data_corte\ngold_dim_cliente snapshot_id + id_cliente + vigente_desde\ngold_dim_conta snapshot_id + id_conta + vigente_desde\ngold_dim_cartao snapshot_id + id_cartao + vigente_desde\ngold_dim_estabelecimento snapshot_id + id_estabelecimento\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 2 — Ler o catálogo de negócio versionado. Nenhuma escrita nesta célula.\n",
+        "from pathlib import Path\n",
+        "import json,re\n",
+        "catalogo=dbutils.widgets.get('catalogo').strip()\n",
+        "if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*',catalogo): raise ValueError('Catálogo inválido')\n",
+        "p=Path.cwd().resolve()\n",
+        "raiz=next(p for p in [p,*p.parents] if (p/'docs/gold_catalogo.json').is_file())\n",
+        "metadados=json.loads((raiz/'docs/gold_catalogo.json').read_text())\n",
+        "for nome,meta in metadados.items():\n",
+        "    print(nome,meta['grao'])\n",
+        "    spark.sql(f'DESCRIBE TABLE `{catalogo}`.`medallion_dev_ouro`.`{nome}`').collect()\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "gold_fato_transacao DESCRIÇÃO E GRÃO: OK\ngold_cliente_mes DESCRIÇÃO E GRÃO: OK\ngold_indicadores_risco DESCRIÇÃO E GRÃO: OK\ngold_features_cliente DESCRIÇÃO E GRÃO: OK\ngold_dim_cliente DESCRIÇÃO E GRÃO: OK\ngold_dim_conta DESCRIÇÃO E GRÃO: OK\ngold_dim_cartao DESCRIÇÃO E GRÃO: OK\ngold_dim_estabelecimento DESCRIÇÃO E GRÃO: OK\nCATÁLOGO GOLD: OK\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 3 — Aplicar descrições de negócio e grão e verificar a releitura.\n",
+        "for nome,meta in metadados.items():\n",
+        "    tabela=f'`{catalogo}`.`medallion_dev_ouro`.`{nome}`'\n",
+        "    comentario=meta['comentario'].replace(\"'\",\"''\")\n",
+        "    spark.sql(f\"COMMENT ON TABLE {tabela} IS '{comentario}'\")\n",
+        "    rows=spark.sql(f'DESCRIBE TABLE EXTENDED {tabela}').collect()\n",
+        "    observado=next((r['data_type'] for r in rows if r['col_name'].strip()=='Comment'),None)\n",
+        "    if observado!=meta['comentario']: raise ValueError('Comentário divergente: '+nome)\n",
+        "    print(nome,'DESCRIÇÃO E GRÃO: OK')\n",
+        "print('CATÁLOGO GOLD: OK')\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Exporte com outputs e envie para revisão. Não é necessário reexecutar 06/07. Esta alteração é de metadados e pode ser repetida; não altera hashes dos registros dos snapshots.\n"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
