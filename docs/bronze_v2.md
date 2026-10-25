@@ -32,3 +32,8 @@ Os MERGEs por arquivo/tabela **não formam uma transação Delta única entre ta
 ## Evidência / status
 
 Código e notebook entregues para validação do responsável no Databricks. A integração real, permissão de CREATE TABLE, MERGE e contagens finais **ainda não estão comprovadas**.
+
+
+## Atualização — preparação para homologação
+
+Atualização de status: os quatro exports Bronze foram enviados pelo operador e arquivados antes desta revisão. Validador somente leitura validate.py compara manifesto, controle e payload/SHA/linha. Limitações físicas de metadados e melhorias de escrita permanecem explícitas em backlog_v2.md; nenhuma migração da Bronze foi executada.

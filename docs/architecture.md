@@ -23,3 +23,8 @@ Notebooks recebem parâmetros e chamam funções do pacote `medallion`. Configur
 ## Validação por etapa
 
 Testes locais cobrem código Python independente de Spark. A validação no Databricks cobre integração real com Unity Catalog e Delta. Testes com mocks não comprovam execução Spark. Cada etapa deve registrar o que foi executado, o resultado e as limitações, sem registrar credenciais ou dados reais.
+
+
+## Atualização — preparação para homologação
+
+Silver e Gold de homologação implementadas em módulos com snapshots Delta insert-only, marcador de completude e filtro obrigatório snapshot_id. Fonte Bronze permanece imutável nesta revisão. Ver homologacao_domingo.md para grãos, UTC, operação e limites do driver.

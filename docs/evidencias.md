@@ -42,3 +42,8 @@ O registro atesta a geração no Databricks, não a ingestão Bronze nem as cama
 ## Etapa 05 — Bronze V2 validada (24/10/2026)
 
 Quatro notebooks Databricks com outputs foram recebidos e arquivados na branch `chore/estrutura-inicial`: carga inicial, repetição da inicial, incremental e atrasada. Todos reportam `BRONZE V2: OK` e não têm outputs de erro; contagens finais de transações por lote: 6.080 / 4.560 / 1.518 (12.158). Consulte o [manifesto e os quatro exports](evidencias/2026-10-24_bronze_v2_exports/README.md) para hashes de origem, blobs versionados e limitações da evidência.
+
+
+## Atualização — preparação para homologação
+
+Preparação 06–09: código/testes locais disponíveis, sem execução Databricks nesta entrega. Coleta obrigatória após cada notebook e novo 09 em sessão limpa; guardar snapshot IDs, run_ids, parâmetros, SHA do commit e exports com outputs. Não editar evidências antigas. Ver homologacao_domingo.md.

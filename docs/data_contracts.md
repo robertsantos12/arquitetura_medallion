@@ -44,3 +44,8 @@ Considerando todos os lotes, deduplicação por ID, vínculos temporais válidos
 | T008 | 50,00 | 50,00 | Mês anterior, válida |
 
 Total líquido esperado: **2.270,00**. T_NEG, T_BAD_CARD e T005 devem ir para quarentena pelas regras de validade; T_CANCEL deve ser preservada com status, excluída das métricas. O total é um oráculo planejado, ainda não resultado de transformação executada. Eventos/estornos inválidos não alteram os valores. Histórico temporal e estorno parcial precisam ser defendidos explicitamente no produto final.
+
+
+## Atualização — preparação para homologação
+
+Adendo vigente para Silver/Gold: contrato_homologacao.md define APROVADA/RECUSADA/CANCELADA, normalização de campos opcionais vazios do CSV, SCD2, D com payload completo, decimal, BRL e estornos. Oráculo 2270 refere-se somente ao subconjunto V1 incorporado. Não alterar a massa V2.

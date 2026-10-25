@@ -1,82 +1,40 @@
-# NovaRota — Data Product Lakehouse
+# NovaRota — Lakehouse Databricks/Delta
 
-Desafio técnico de Engenharia de Dados Sênior em Databricks e Delta Lake.
-Construção incremental: cada etapa passa por testes locais e validação no workspace.
+Case sênior com massa fictícia V2 temática de Chaves, Bronze incremental e preparação de Silver/Gold/SQL para homologação.
 
-## Situação
+## Estado real
 
-- Etapa 1 validada pelo responsável no Databricks: Delta, MERGE, releitura e repetição sem duplicidade para a chave de teste.
-- Etapa 2 validada nos exports recebidos: pacote Python, configuração, logs e cinco schemas dev.
-- Etapa 2B: execução de 02 confirmada pelo output do responsável; releitura independente com 03 pendente.
-- Dados sintéticos, Bronze, Prata/SCD2, Ouro e SQL analítico ainda não implementados.
+- 00–05: validados anteriormente pelo operador; exports em docs/evidencias. Massa V2 e schemas Bronze preservados nesta revisão.
+- 06–09: implementados; **34 testes locais aprovados**. Integração no Databricks ainda PENDENTE. Não existem outputs Databricks novos nesta entrega.
+- Trabalho apenas em `chore/estrutura-inicial`; sem merge em develop/main.
 
-## Executar a etapa 2 no Databricks
+## Homologar às 11h de domingo
 
-1. Na pasta Git, selecione `chore/estrutura-inicial` e faça Pull.
-2. Abra `notebooks/01_preparar_projeto.ipynb` e execute todas as células.
-3. Mantenha o widget `catalogo` como `workspace`. Os demais parâmetros podem ficar no padrão.
-4. Espere `ESTRUTURA DO PROJETO: OK` e a lista de cinco schemas.
+Siga [docs/homologacao_domingo.md](docs/homologacao_domingo.md), um notebook por vez. Faça Pull e use Python novo. **Não regenere a massa nem reexecute 00–05.**
 
-O notebook encontra a raiz do repositório a partir do diretório atual, adiciona `src` ao caminho de importação e chama o pacote. Não exige instalação de PySpark nem acesso à internet. Se o diretório atual não apontar para a pasta Git, ajuste-o conforme a mensagem de erro.
+| Notebook | Parâmetros |
+|---|---|
+| 06_processar_silver | catalogo=workspace, data_referencia=2026-01-15, modo=incremental; guardar SNAPSHOT_SILVER |
+| 07_construir_gold | mesmos catálogo/data, snapshot_silver do 06, data_corte=2026-05-31; guardar SNAPSHOT_GOLD |
+| 08_analises_sql | mesmos catálogo/data e snapshot_gold do 07 |
+| 09_validar_pipeline | mesmos catálogo/data, IDs Silver/Gold, mesmo corte do 07 |
 
-O bootstrap cria somente `workspace.medallion_dev_{landing,bronze,prata,ouro,controle}` com `CREATE SCHEMA IF NOT EXISTS` e verifica acesso aos schemas. Pode ser repetido. Uma falha é registrada e propagada; os schemas criados antes dela permanecem disponíveis. A etapa não cria tabelas nem volumes, não concede permissões e não insere dados.
+Execute só o primeiro CMD para mostrar widgets, preencha e execute os demais. Após cada etapa exporte IPYNB com outputs, confira e faça commit de validação. Preserve falhas e pare; não apague tabelas.
 
-## Testes locais
+## Código e testes
 
-Python 3.10 ou superior. Na raiz do repositório:
+Transformações em src/medallion/{quality,silver,gold}; persistência, SQL e execução em src/medallion/pipeline; validador Bronze em src/medallion/bronze/validate.py. SQL em sql/. Notebooks são adaptadores finos. Sem dependências externas para testes puros:
 
 ```bash
-PYTHONPATH=src python -m unittest discover -s tests -v
+PYTHONPATH=src python3 -m unittest discover -s tests -v
 ```
 
-Os testes desta entrega não exigem dependências externas. Cobrem configuração, datas de reprocessamento, isolamento de nomes, bloqueio do bootstrap em produção e propagação de erro. Ainda não existem testes de transformação Spark; serão adicionados junto das transformações. Para instalação como pacote, use `python -m pip install -e .` em um ambiente com setuptools disponível.
+Os testes cobrem fixture V1/V2 serializada, SCD2 atrasado, conflitos, qualidade, recusas, estornos, corte temporal, oráculo V1=R$2.270, determinismo e protocolo de snapshots com dublê. O dublê não substitui Spark/Delta. SQL/EXPLAIN precisam do Databricks.
 
-## Organização atual
+## Decisões e limites
 
-| Caminho | Responsabilidade |
-| --- | --- |
-| `src/medallion/config/` | Parâmetros e validação sem depender de Spark |
-| `src/medallion/observability/` | Logs JSON em UTC com contexto de execução |
-| `src/medallion/bootstrap.py` | Preparação dos schemas dev |
-| `notebooks/` | Execução e diagnóstico no Databricks |
-| `tests/` | Testes automatizados |
-| `docs/` | Arquitetura, decisões e evidências |
+Silver/Gold são snapshots Delta imutáveis: MERGE insert-only e marcador de completude. Cada consulta exige snapshot_id. Não somar snapshots. Reprocessamento recompõe o cenário, preservando versões anteriores. Processamento no driver é decisão do case pequeno, não desenho de escala; migração distribuída está no backlog.
 
-Módulos de ingestão, qualidade, Prata e Ouro serão criados com suas implementações, evitando diretórios sem função nesta entrega.
+Contratos financeiros e temporais: [docs/contrato_homologacao.md](docs/contrato_homologacao.md). Grãos, governança e operação: [docs/homologacao_domingo.md](docs/homologacao_domingo.md). Bloqueios e limitações: [docs/backlog_v2.md](docs/backlog_v2.md). Revisão de baseline: [docs/revisao_homologacao.md](docs/revisao_homologacao.md).
 
-## Parâmetros
-
-| Parâmetro | Padrão | Uso |
-| --- | --- | --- |
-| `ambiente` | `dev` | Configuração aceita dev/hml/prod; bootstrap libera apenas dev |
-| `catalogo` | `workspace` | Catálogo existente no Unity Catalog |
-| `modo` | `incremental` | Alternativa: `reprocessamento` |
-| `data_referencia` | sem valor | YYYY-MM-DD; obrigatória em reprocessamento |
-| `batch_id` | UUID novo | Pode ser informado para correlacionar uma retentativa |
-| `raiz_arquivos` | `/Volumes/<catalogo>/medallion_dev_landing/arquivos` | Caminho planejado; volume e acesso ainda não validados |
-
-Modo, data e path são parâmetros preparados para o futuro pipeline: ainda não disparam cargas. O batch_id permite correlação de logs; sozinho não garante idempotência de ingestão.
-
-## Fluxo Git
-
-O trabalho atual está em `chore/estrutura-inicial`. Após validação, a integração proposta é PR para `develop`; novas funcionalidades partem de `develop` e retornam por PR. A integração de `develop` em `main` ocorre após revisão e evidências. Nenhum merge foi feito nesta entrega. Commits seguem Conventional Commits.
-
-## Próximas etapas
-
-1. Executar 03_reler_evidencias em nova sessão usando os run_ids do 02.
-2. Definir contratos, gerar massa sintética determinística e validar arquivos no Volume.
-3. Implementar Bronze incremental, metadados e preservação de schema.
-4. Implementar qualidade, quarentena, MERGE e SCD2 na Prata, com testes de transformação.
-5. Implementar Ouro, SQL avançado, testes ponta a ponta e evidências.
-
-Veja `docs/architecture.md`, `docs/decisions.md` e `docs/evidencias.md`.
-
-## Evidências padronizadas
-
-Os outputs dos notebooks devem acompanhar os commits de validação. O repositório inclui `.databricks/commit_outputs`; é necessário habilitar o recurso no workspace e verificar o primeiro envio com resultados reais. Consulte `docs/preservacao_execucoes.md` antes de executar as próximas etapas. Esta configuração preserva checkpoints feitos por commit, e não todas as tentativas automaticamente.
-
-A investigação de 24/10/2026 confirmou outputs vazios no GitHub apesar de resultados visíveis no workspace. Antes de continuar, consulte `docs/rastreabilidade_execucoes.md` e preserve os notebooks por exportação com outputs. A primeira implementação de registro Delta/Volume está disponível e aguarda teste no workspace; veja docs/rastreabilidade_implementacao.md.
-
-## Próxima execução — etapa 2B
-
-Faça Pull e execute `notebooks/02_validar_rastreabilidade.ipynb`. Ele registra duas tentativas de sucesso e uma falha controlada, preservadas separadamente. Depois use os três run_ids no notebook `03_reler_evidencias.ipynb`, em nova sessão Python. Instruções: `docs/rastreabilidade_implementacao.md`. Foram aprovados 17 testes locais; as integrações Delta e Volume tiveram execução confirmada no 02; falta a releitura em nova sessão com 03.
+O formato final exigido no PDF é repositório privado ou pacote compactado. Preparação da entrega final e validação real seguem pendentes; não foi alterada a visibilidade do repositório.

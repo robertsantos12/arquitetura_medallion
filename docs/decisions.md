@@ -25,3 +25,8 @@ O gerador será determinístico, com duplicidades, CDC fora de ordem, dados atra
 ## Decisões ainda pendentes
 
 Auto Loader versus alternativa compatível com o ambiente; controle incremental e recuperação de falhas; deduplicação entre lotes; SCD2 com alterações retroativas; joins temporais; métricas financeiras; estratégia de clustering; Workflows e CI. Estes pontos não estão implementados nesta entrega.
+
+
+## Atualização — preparação para homologação
+
+ADR homologação: reconstrução completa por cenário pequeno, preservação de snapshots por fingerprint e MERGE somente inclusão. Escolha evita UPDATE/DELETE de dados existentes. Sem atomicidade multi-tabela; marcador e conferência de hashes protegem consumo. Features por evento até corte não são bitemporais. Regras financeiras em contrato_homologacao.md.
