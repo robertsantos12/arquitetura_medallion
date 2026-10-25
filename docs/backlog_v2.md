@@ -29,3 +29,8 @@
 - V2 cobre 120 dias, 18 nomes temáticos e três IDs V1; não seis meses nem todos os personagens. Expandir somente em nova versão.
 - Mais padrões de consumo distintos por personagem, anomalias plantadas, reenvios conflitantes, D esparso e moedas múltiplas ficam para nova fixture.
 - Meses sem tentativas não são densificados no SQL: LAG compara meses observados. Pares de cidade/segmento incluem o próprio cliente. Há só 20 clientes válidos; quartis não representam população real.
+
+
+## Bloqueio confirmado — notebook 12, 25/10/2026
+
+Tentativa real falhou na primeira criação de metadado externo: PermissionDenied, falta CREATE EXTERNAL METADATA no metastore. Não é prova de indisponibilidade da edição Free. Nenhuma aresta confirmada; linhagem visual declarada NÃO VALIDADA. Evidência sanitizada em docs/evidencias/2026-10-25_linhagem_12_bloqueada. Sem alteração de permissões ou dados pelo revisor. Resolução depende de responsável autorizado do metastore ou ambiente que disponibilize o privilégio. Para entrega atual manter mapa/código documentados e a limitação explícita; não bloquear o fechamento financeiro já validado por esse complemento. Captura nativa depende da evolução Spark/SQL, sem reprocessamento artificial de snapshots históricos.
