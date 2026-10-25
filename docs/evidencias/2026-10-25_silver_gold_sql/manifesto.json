@@ -1,0 +1,20 @@
+{
+  "proveniencia": "Exports enviados pelo operador em 25/10/2026; revisão dos outputs, sem consulta direta ao Databricks. Metadados pessoais removidos. 09 ainda não recebido.",
+  "arquivos": [
+    {
+      "arquivo": "06_processar_silver.ipynb.json",
+      "original_sha256": "e66561d9323a0708af2080065c466418240d3002f11ed806a64c06cc217a58ff",
+      "publicado_sha256": "8b1965e96081fd2e82b36b8190a73eb94d6a30624ebe4c4c32ed003c15609ba4"
+    },
+    {
+      "arquivo": "07_construir_gold.ipynb.json",
+      "original_sha256": "65cb21aa324fbd81ad8446d761d8a43ccad5839a51aa64d8127462192c1d8b3c",
+      "publicado_sha256": "9df9757f262fcd5ece575259720e643bcb86f2a1d2504631a91c621f0d7aa54e"
+    },
+    {
+      "arquivo": "08_analises_sql.ipynb.json",
+      "original_sha256": "e6bf77f9eb55484fa16599d39792883ef2898ab6ef177c79f2fd415bb9b0a3dd",
+      "publicado_sha256": "84f5ad05062d62f2070a4d9347374f3d5ddc8509562bdcafea72d70fc0861186"
+    }
+  ]
+}

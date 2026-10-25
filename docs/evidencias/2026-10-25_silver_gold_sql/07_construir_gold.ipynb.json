@@ -1,0 +1,109 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Gold: financeiro, dimensões e features\n",
+        "\n",
+        "Branch `chore/estrutura-inicial`. Faça Pull e use uma sessão Python nova para carregar os módulos atualizados. Não reexecute 00–05 nem regenere a massa. Não acrescente reinício dentro de Run all.\n",
+        "\n",
+        "Status: implementado e testado localmente; integração Databricks pendente de seus outputs. Consulte `docs/homologacao_domingo.md`.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Preencha os widgets antes de executar os próximos CMDs. Run all não pausa para preenchimento.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 1 — Execute somente este CMD, preencha os campos e depois prossiga.\n",
+        "# catalogo: Catálogo Unity Catalog já validado. Valor recomendado: workspace.\n",
+        "dbutils.widgets.text('catalogo','workspace')\n",
+        "# data_referencia: Data BASE do cenário V2 existente; não é hoje. Valor recomendado: 2026-01-15.\n",
+        "dbutils.widgets.text('data_referencia','2026-01-15')\n",
+        "# snapshot_silver: Cole o SHA256 SNAPSHOT_SILVER emitido pelo 06; obrigatório. Valor recomendado: preencher.\n",
+        "dbutils.widgets.text('snapshot_silver','')\n",
+        "# data_corte: Último dia inclusivo UTC dos eventos; manter para homologação. Valor recomendado: 2026-05-31.\n",
+        "dbutils.widgets.text('data_corte','2026-05-31')\n",
+        "print(\"Preencha os widgets antes de executar os próximos CMDs. Run all não pausa para preenchimento.\")\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "# CMD 2 — Localizar o pacote atualizado. Execute dentro da pasta Git.\n",
+        "from pathlib import Path\n",
+        "import sys\n",
+        "atual=Path.cwd().resolve()\n",
+        "raiz=next((p for p in [atual,*atual.parents] if (p/'src/medallion').is_dir() and (p/'pyproject.toml').is_file()),None)\n",
+        "if raiz is None: raise RuntimeError(\"Abra o notebook dentro da pasta Git\")\n",
+        "if str(raiz/'src') not in sys.path: sys.path.insert(0,str(raiz/'src'))\n",
+        "from medallion.config import PipelineConfig\n",
+        "config=PipelineConfig(catalogo=dbutils.widgets.get('catalogo').strip(),data_referencia=dbutils.widgets.get('data_referencia').strip())\n",
+        "spark.conf.set('spark.sql.session.timeZone','UTC')\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "{\"run_id\": \"b69edc44-79e3-4a42-96fd-1c6081cbf056\", \"status\": \"INICIADA\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/b69edc44-79e3-4a42-96fd-1c6081cbf056/0001_INICIADA.json\"}\n{\"run_id\": \"b69edc44-79e3-4a42-96fd-1c6081cbf056\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/b69edc44-79e3-4a42-96fd-1c6081cbf056/0002_VERIFICACAO.json\"}\n{\"run_id\": \"b69edc44-79e3-4a42-96fd-1c6081cbf056\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/b69edc44-79e3-4a42-96fd-1c6081cbf056/0003_VERIFICACAO.json\"}\n{\"run_id\": \"b69edc44-79e3-4a42-96fd-1c6081cbf056\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/b69edc44-79e3-4a42-96fd-1c6081cbf056/0004_VERIFICACAO.json\"}\n{\"run_id\": \"b69edc44-79e3-4a42-96fd-1c6081cbf056\", \"status\": \"SUCESSO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/b69edc44-79e3-4a42-96fd-1c6081cbf056/0005_SUCESSO.json\"}\nGOLD HOMOLOGAÇÃO: OK\n{\"snapshot_id\": \"c10836cdceb0fd89a0c952aab2ffbcab8e9250f2b559cf3a50cd9c91d15c4a0d\", \"relatorio\": {\"gold_fato_transacao\": {\"linhas\": 12153, \"inseridas\": 12153, \"hash\": \"749191b409ff83f1f89fc0a4b422bf7b1833f7cb3b696af1e672f82687ebd4e1\"}, \"gold_cliente_mes\": {\"linhas\": 94, \"inseridas\": 94, \"hash\": \"0e2dd460d8c401fb2a7276bd661caf78d7c29cbc4dc704766973c79b014c3172\"}, \"gold_indicadores_risco\": {\"linhas\": 12153, \"inseridas\": 12153, \"hash\": \"935c9211ab9d6a0acb8a4902df48d8caadbea5e57bb95a8903166c51fe9e6c73\"}, \"gold_features_cliente\": {\"linhas\": 20, \"inseridas\": 20, \"hash\": \"3d49bf90cbaafdc898ff222d3f05bbb96ecf73c71cb0997a202b2510b9a757d3\"}, \"gold_dim_cliente\": {\"linhas\": 22, \"inseridas\": 22, \"hash\": \"ebc02d1ca7c335c1f57e56a6523c485061fb2b2d535aa0c8671f8128a206850e\"}, \"gold_dim_conta\": {\"linhas\": 22, \"inseridas\": 22, \"hash\": \"6205258dec43d720f93145c8335ebfa4657f0e5fc8cd33565395f74f0918046a\"}, \"gold_dim_cartao\": {\"linhas\": 23, \"inseridas\": 23, \"hash\": \"ff3408f0c383bc727dcc5cd426b70b079d7e801aad2933b240056d2f24ce4317\"}, \"gold_dim_estabelecimento\": {\"linhas\": 11, \"inseridas\": 11, \"hash\": \"cb94bb3e1c7c838f19bdfd71732b7458ffdaddf1ec2a53229b967d6e8283c90f\"}}}\n{'run_id': 'b69edc44-79e3-4a42-96fd-1c6081cbf056', 'status': 'SUCESSO', 'eventos': 5, 'codigo_sha256': 'ea86e5654c81535af1bb611d9d8060035d29d5ced2607e1813a807d179d7cab0', 'hashes_verificados': True}\nSNAPSHOT_GOLD=c10836cdceb0fd89a0c952aab2ffbcab8e9250f2b559cf3a50cd9c91d15c4a0d\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 3 — Executar o módulo e conferir o resultado. Preserve erros; não apague tabelas.\n",
+        "from medallion.pipeline.execute import executar\n",
+        "resultado=executar(spark,config,raiz,'gold',dbutils.widgets.get('snapshot_silver').strip(),dbutils.widgets.get('data_corte').strip())\n",
+        "print(\"SNAPSHOT_GOLD=\"+resultado['snapshot_id'])\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Coleta\n",
+        "\n",
+        "Exporte IPYNB com outputs, confira os resultados e faça commit/push na branch chore/estrutura-inicial. Envie export e SHA antes de avançar. Nunca confunda saída local com validação Databricks. Snapshots antigos e evidências são preservados. Se ocorrer erro, interrompa e preserve o output.\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "##### Melhorias: \n",
+        "- Tabela gold sem descrição de colunas e de tabelas\n",
+        "- adicionar a linha no unity catalog para poder visualizar as origens da gold na silver e ate a bronze."
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
