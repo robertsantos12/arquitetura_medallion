@@ -1,0 +1,98 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Silver: qualidade, SCD2 e snapshots\n",
+        "\n",
+        "Branch `chore/estrutura-inicial`. Faça Pull e use uma sessão Python nova para carregar os módulos atualizados. Não reexecute 00–05 nem regenere a massa. Não acrescente reinício dentro de Run all.\n",
+        "\n",
+        "Status: implementado e testado localmente; integração Databricks pendente de seus outputs. Consulte `docs/homologacao_domingo.md`.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Preencha os widgets antes de executar os próximos CMDs. Run all não pausa para preenchimento.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 1 — Execute somente este CMD, preencha os campos e depois prossiga.\n",
+        "# catalogo: Catálogo Unity Catalog já validado. Valor recomendado: workspace.\n",
+        "dbutils.widgets.text('catalogo','workspace')\n",
+        "# data_referencia: Data BASE do cenário V2 existente; não é hoje. Valor recomendado: 2026-01-15.\n",
+        "dbutils.widgets.text('data_referencia','2026-01-15')\n",
+        "print(\"Preencha os widgets antes de executar os próximos CMDs. Run all não pausa para preenchimento.\")\n",
+        "# modo: incremental ou reprocessamento; ambos recompõem o cenário completo sem apagar snapshots.\n",
+        "dbutils.widgets.dropdown(\"modo\",\"incremental\",[\"incremental\",\"reprocessamento\"])\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "# CMD 2 — Localizar o pacote atualizado. Execute dentro da pasta Git.\n",
+        "from pathlib import Path\n",
+        "import sys\n",
+        "atual=Path.cwd().resolve()\n",
+        "raiz=next((p for p in [atual,*atual.parents] if (p/'src/medallion').is_dir() and (p/'pyproject.toml').is_file()),None)\n",
+        "if raiz is None: raise RuntimeError(\"Abra o notebook dentro da pasta Git\")\n",
+        "if str(raiz/'src') not in sys.path: sys.path.insert(0,str(raiz/'src'))\n",
+        "from medallion.config import PipelineConfig\n",
+        "config=PipelineConfig(catalogo=dbutils.widgets.get('catalogo').strip(),data_referencia=dbutils.widgets.get('data_referencia').strip(),modo=dbutils.widgets.get('modo'))\n",
+        "spark.conf.set('spark.sql.session.timeZone','UTC')\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"INICIADA\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0001_INICIADA.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0002_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0003_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0004_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0005_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0006_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0007_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0008_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0009_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"VERIFICACAO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0010_VERIFICACAO.json\"}\n{\"run_id\": \"36bc2bb5-ef1a-4fca-81c8-c7a0a720011a\", \"status\": \"SUCESSO\", \"arquivo\": \"/Volumes/workspace/medallion_dev_controle/evidencias/execucoes/36bc2bb5-ef1a-4fca-81c8-c7a0a720011a/0011_SUCESSO.json\"}\nSILVER HOMOLOGAÇÃO: OK\n{\"snapshot_id\": \"0958871b64ea5719e3ab4137a5867ad0962a8894a5e89a21dffde60657d92d13\", \"relatorio\": {\"clientes_cdc\": {\"linhas\": 22, \"inseridas\": 22, \"hash\": \"e68456790a696f5416e98848dd943024bdf0d5dc5493c2dcf5ae12c9713f0a09\"}, \"contas_cdc\": {\"linhas\": 22, \"inseridas\": 22, \"hash\": \"d11b2a4f958889a0764469ece2fb0cf90fc3caa75e19ee2175b8203c26355022\"}, \"cartoes_cdc\": {\"linhas\": 23, \"inseridas\": 23, \"hash\": \"beb178d6c6f9d5447e55b03a7a2abc0221ed2d665cd0c186c48b859e6bb935c9\"}, \"transacoes\": {\"linhas\": 12153, \"inseridas\": 12153, \"hash\": \"502888c8d57485817363bcab5fc91906ff40e4a7bd3c65596a8b3db1da764c38\"}, \"eventos_risco\": {\"linhas\": 3, \"inseridas\": 3, \"hash\": \"e9b7b6bc787f32c4b24622f7e8ee3a066cc9f41bef82f467764a27dcaba34fa4\"}, \"estornos\": {\"linhas\": 3, \"inseridas\": 3, \"hash\": \"b182a7a995054900ec2fa0406b69b24d8998379537c29616342fc808f59d6b21\"}, \"quarentena\": {\"linhas\": 8, \"inseridas\": 8, \"hash\": \"3e5414164dce531b64d4f369b49bf78221a99475254b3d8923ab7a4620a8d963\"}}}\n{'run_id': '36bc2bb5-ef1a-4fca-81c8-c7a0a720011a', 'status': 'SUCESSO', 'eventos': 11, 'codigo_sha256': 'ea86e5654c81535af1bb611d9d8060035d29d5ced2607e1813a807d179d7cab0', 'hashes_verificados': True}\nSNAPSHOT_SILVER=0958871b64ea5719e3ab4137a5867ad0962a8894a5e89a21dffde60657d92d13\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 3 — Executar o módulo e conferir o resultado. Preserve erros; não apague tabelas.\n",
+        "from medallion.pipeline.execute import executar\n",
+        "resultado=executar(spark,config,raiz,'silver')\n",
+        "print(\"SNAPSHOT_SILVER=\"+resultado['snapshot_id'])\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Coleta\n",
+        "\n",
+        "Exporte IPYNB com outputs, confira os resultados e faça commit/push na branch chore/estrutura-inicial. Envie export e SHA antes de avançar. Nunca confunda saída local com validação Databricks. Snapshots antigos e evidências são preservados. Se ocorrer erro, interrompa e preserve o output.\n"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

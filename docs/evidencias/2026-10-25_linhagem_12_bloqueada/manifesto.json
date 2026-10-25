@@ -1,0 +1,17 @@
+{
+  "status": "BLOQUEADA_POR_PERMISSAO",
+  "erro": "PermissionDenied: ausência de CREATE EXTERNAL METADATA no metastore",
+  "ponto": "Primeiro POST external-metadata, antes das arestas",
+  "free_edition": "Indisponibilidade da edição não comprovada; privilégio ausente confirmado.",
+  "proveniencia": "Export do operador; sem consulta direta ao Databricks pelo revisor.",
+  "original_sha256": "b07ca8a329ed0eb597371e939bee23a72bcdb8406cda4243b41c97dfeae41fef",
+  "publicado_sha256": "1a9a2f5dd40c7f7212dbba5fcc0e2cde330acc361733a48e00c3f3b363f05790",
+  "redacoes": [
+    "metadados Databricks",
+    "ANSI",
+    "caminhos pessoais",
+    "principal",
+    "host",
+    "emails"
+  ]
+}

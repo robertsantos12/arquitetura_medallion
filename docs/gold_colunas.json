@@ -1,0 +1,805 @@
+{
+  "gold_fato_transacao": {
+    "primary_key": [
+      "snapshot_id",
+      "id_transacao"
+    ],
+    "tags": {
+      "nr_projeto": "novarota",
+      "nr_camada": "gold",
+      "nr_dominio": "transacional",
+      "nr_dados": "sinteticos"
+    },
+    "columns": {
+      "snapshot_id": {
+        "descricao": "Identificador da versão completa dos dados. Filtrar um único snapshot para evitar somar versões. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "id_transacao": {
+        "descricao": "Identificador de negócio da tentativa de pagamento, aprovada, recusada ou cancelada. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "id_cartao": {
+        "descricao": "Identificador do cartão utilizado na tentativa de pagamento.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "data_transacao": {
+        "descricao": "Instante UTC da tentativa. Define competência mensal e vínculo cadastral temporal.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "valor": {
+        "descricao": "Valor solicitado na tentativa em BRL, inclusive recusas. Não somar como gasto efetivo.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "mcc": {
+        "descricao": "Código da categoria comercial do estabelecimento na origem.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "estabelecimento": {
+        "descricao": "Nome comercial simulado do estabelecimento.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "canal": {
+        "descricao": "Canal de captura informado na origem, como POS.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "pais": {
+        "descricao": "Código do país informado na transação.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "moeda": {
+        "descricao": "Moeda da tentativa; nesta entrega somente BRL é aceita na Silver.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "status_transacao": {
+        "descricao": "APROVADA gera gasto; RECUSADA e CANCELADA são tentativas válidas com gasto zero.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "motivo_recusa": {
+        "descricao": "Motivo textual informado na origem para recusa; pode ser nulo e não comprova saldo real.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "id_conta": {
+        "descricao": "Identificador da conta do cliente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "id_cliente": {
+        "descricao": "Identificador do cliente fictício. Não representa CPF.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "nome": {
+        "descricao": "Nome do personagem/cliente fictício na versão cadastral aplicável.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "cidade": {
+        "descricao": "Cidade da versão cadastral aplicável. Na fato, vigente na data da transação.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "segmento": {
+        "descricao": "Segmento cadastral do cliente. Na fato, vigente na data da transação.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "cliente_versao": {
+        "descricao": "Chave da versão cadastral do cliente vigente na transação. Join com row_key da dimensão e mesmo snapshot Gold.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "referencia_temporal"
+        }
+      },
+      "conta_versao": {
+        "descricao": "Chave da versão da conta vigente na transação. Join com row_key da dimensão e mesmo snapshot Gold.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "referencia_temporal"
+        }
+      },
+      "cartao_versao": {
+        "descricao": "Chave da versão do cartão vigente na transação. Join com row_key da dimensão e mesmo snapshot Gold.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "referencia_temporal"
+        }
+      },
+      "payload_json": {
+        "descricao": "Conteúdo semântico preservado da origem, incluindo campos extras; pode conter tokens e nomes fictícios.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "row_key": {
+        "descricao": "Identificador técnico do registro dentro do snapshot, usado pelo MERGE idempotente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "chave_merge"
+        }
+      },
+      "valor_bruto": {
+        "descricao": "Gasto aprovado em BRL antes dos estornos. Zero para recusas/cancelamentos.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "valor_estornado": {
+        "descricao": "Soma de estornos válidos conhecidos até o corte, em BRL. No mensal, atribuída ao mês da compra original.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "valor_liquido": {
+        "descricao": "Gasto bruto menos estornos válidos até o corte, em BRL. Chargeback não é descontado novamente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "data_corte": {
+        "descricao": "Último dia inclusivo UTC dos eventos considerados. Não garante disponibilidade histórica por chegada.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "mes": {
+        "descricao": "Primeiro dia do mês de competência da transação em UTC; estornos são atribuídos à compra original.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "id_estabelecimento": {
+        "descricao": "Identificador derivado do nome do estabelecimento nesta fixture, sem cadastro externo.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      }
+    }
+  },
+  "gold_cliente_mes": {
+    "primary_key": [
+      "snapshot_id",
+      "id_cliente",
+      "mes"
+    ],
+    "tags": {
+      "nr_projeto": "novarota",
+      "nr_camada": "gold",
+      "nr_dominio": "transacional",
+      "nr_dados": "sinteticos"
+    },
+    "columns": {
+      "snapshot_id": {
+        "descricao": "Identificador da versão completa dos dados. Filtrar um único snapshot para evitar somar versões. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "row_key": {
+        "descricao": "Identificador técnico do registro dentro do snapshot, usado pelo MERGE idempotente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "chave_merge"
+        }
+      },
+      "id_cliente": {
+        "descricao": "Identificador do cliente fictício. Não representa CPF. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "mes": {
+        "descricao": "Primeiro dia do mês de competência da transação em UTC; estornos são atribuídos à compra original. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "tentativas": {
+        "descricao": "Quantidade de tentativas válidas, incluindo aprovadas, recusadas e canceladas.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "aprovadas": {
+        "descricao": "Quantidade de tentativas com status APROVADA, incluindo compras posteriormente estornadas.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "recusadas": {
+        "descricao": "Quantidade de tentativas RECUSADA, sem gasto efetivo.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "canceladas": {
+        "descricao": "Quantidade de tentativas CANCELADA, sem gasto efetivo.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "valor_bruto": {
+        "descricao": "Gasto aprovado em BRL antes dos estornos. Zero para recusas/cancelamentos.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "valor_estornado": {
+        "descricao": "Soma de estornos válidos conhecidos até o corte, em BRL. No mensal, atribuída ao mês da compra original.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "valor_liquido": {
+        "descricao": "Gasto bruto menos estornos válidos até o corte, em BRL. Chargeback não é descontado novamente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      }
+    }
+  },
+  "gold_indicadores_risco": {
+    "primary_key": [
+      "snapshot_id",
+      "id_transacao"
+    ],
+    "tags": {
+      "nr_projeto": "novarota",
+      "nr_camada": "gold",
+      "nr_dominio": "transacional",
+      "nr_dados": "sinteticos"
+    },
+    "columns": {
+      "snapshot_id": {
+        "descricao": "Identificador da versão completa dos dados. Filtrar um único snapshot para evitar somar versões. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "row_key": {
+        "descricao": "Identificador técnico do registro dentro do snapshot, usado pelo MERGE idempotente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "chave_merge"
+        }
+      },
+      "id_transacao": {
+        "descricao": "Identificador de negócio da tentativa de pagamento, aprovada, recusada ou cancelada. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "id_cliente": {
+        "descricao": "Identificador do cliente fictício. Não representa CPF.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "eventos": {
+        "descricao": "Quantidade de eventos de risco válidos da transação até o corte; zero quando não há eventos.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "chargebacks": {
+        "descricao": "Quantidade de eventos CHARGEBACK até o corte, sem novo abatimento financeiro.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "valor_estornado": {
+        "descricao": "Soma de estornos válidos conhecidos até o corte, em BRL. No mensal, atribuída ao mês da compra original.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "data_corte": {
+        "descricao": "Último dia inclusivo UTC dos eventos considerados. Não garante disponibilidade histórica por chegada.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      }
+    }
+  },
+  "gold_features_cliente": {
+    "primary_key": [
+      "snapshot_id",
+      "id_cliente",
+      "data_corte"
+    ],
+    "tags": {
+      "nr_projeto": "novarota",
+      "nr_camada": "gold",
+      "nr_dominio": "transacional",
+      "nr_dados": "sinteticos"
+    },
+    "columns": {
+      "snapshot_id": {
+        "descricao": "Identificador da versão completa dos dados. Filtrar um único snapshot para evitar somar versões. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "row_key": {
+        "descricao": "Identificador técnico do registro dentro do snapshot, usado pelo MERGE idempotente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "chave_merge"
+        }
+      },
+      "id_cliente": {
+        "descricao": "Identificador do cliente fictício. Não representa CPF. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "data_corte": {
+        "descricao": "Último dia inclusivo UTC dos eventos considerados. Não garante disponibilidade histórica por chegada. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "tentativas": {
+        "descricao": "Quantidade de tentativas válidas, incluindo aprovadas, recusadas e canceladas.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "aprovadas": {
+        "descricao": "Quantidade de tentativas com status APROVADA, incluindo compras posteriormente estornadas.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "recusadas": {
+        "descricao": "Quantidade de tentativas RECUSADA, sem gasto efetivo.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "valor_liquido": {
+        "descricao": "Gasto bruto menos estornos válidos até o corte, em BRL. Chargeback não é descontado novamente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "dias_desde_ultima_compra": {
+        "descricao": "Dias entre o corte e a última tentativa APROVADA; pode incluir compra depois estornada. Nulo se não há aprovação.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      }
+    }
+  },
+  "gold_dim_cliente": {
+    "primary_key": [
+      "snapshot_id",
+      "id_cliente",
+      "vigente_desde"
+    ],
+    "tags": {
+      "nr_projeto": "novarota",
+      "nr_camada": "gold",
+      "nr_dominio": "transacional",
+      "nr_dados": "sinteticos"
+    },
+    "columns": {
+      "snapshot_id": {
+        "descricao": "Identificador da versão completa dos dados. Filtrar um único snapshot para evitar somar versões. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "id_cliente": {
+        "descricao": "Identificador do cliente fictício. Não representa CPF. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "cpf": {
+        "descricao": "Token sintético do documento do cliente, sem CPF real nem validação de dígitos.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "nome": {
+        "descricao": "Nome do personagem/cliente fictício na versão cadastral aplicável.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "cidade": {
+        "descricao": "Cidade da versão cadastral aplicável. Na fato, vigente na data da transação.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "estado": {
+        "descricao": "Sigla da unidade federativa do cadastro fictício.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "renda": {
+        "descricao": "Renda declarada simulada do cliente, em BRL. Não é renda inferida do consumo.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "segmento": {
+        "descricao": "Segmento cadastral do cliente. Na fato, vigente na data da transação.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "data_atualizacao": {
+        "descricao": "Instante UTC de vigência da alteração cadastral na origem CDC.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "operacao": {
+        "descricao": "Operação CDC: I inclusão, U atualização, D tombstone; D não apaga o histórico.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "vigente_desde": {
+        "descricao": "Início inclusivo UTC da versão histórica SCD2. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "vigente_ate": {
+        "descricao": "Fim exclusivo UTC da versão SCD2; nulo indica versão sem término conhecido.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "row_key": {
+        "descricao": "Identificador técnico do registro dentro do snapshot, usado pelo MERGE idempotente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "chave_merge"
+        }
+      },
+      "payload_json": {
+        "descricao": "Conteúdo semântico preservado da origem, incluindo campos extras; pode conter tokens e nomes fictícios.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      }
+    }
+  },
+  "gold_dim_conta": {
+    "primary_key": [
+      "snapshot_id",
+      "id_conta",
+      "vigente_desde"
+    ],
+    "tags": {
+      "nr_projeto": "novarota",
+      "nr_camada": "gold",
+      "nr_dominio": "transacional",
+      "nr_dados": "sinteticos"
+    },
+    "columns": {
+      "snapshot_id": {
+        "descricao": "Identificador da versão completa dos dados. Filtrar um único snapshot para evitar somar versões. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "id_conta": {
+        "descricao": "Identificador da conta do cliente. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "id_cliente": {
+        "descricao": "Identificador do cliente fictício. Não representa CPF.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "tipo_conta": {
+        "descricao": "Modalidade da conta conforme cadastro de origem.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "status_conta": {
+        "descricao": "Estado cadastral da conta: ATIVA, ENCERRADA ou BLOQUEADA.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "data_abertura": {
+        "descricao": "Data declarada de abertura da conta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "data_atualizacao": {
+        "descricao": "Instante UTC de vigência da alteração cadastral na origem CDC.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "operacao": {
+        "descricao": "Operação CDC: I inclusão, U atualização, D tombstone; D não apaga o histórico.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "vigente_desde": {
+        "descricao": "Início inclusivo UTC da versão histórica SCD2. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "vigente_ate": {
+        "descricao": "Fim exclusivo UTC da versão SCD2; nulo indica versão sem término conhecido.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "row_key": {
+        "descricao": "Identificador técnico do registro dentro do snapshot, usado pelo MERGE idempotente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "chave_merge"
+        }
+      },
+      "payload_json": {
+        "descricao": "Conteúdo semântico preservado da origem, incluindo campos extras; pode conter tokens e nomes fictícios.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      }
+    }
+  },
+  "gold_dim_cartao": {
+    "primary_key": [
+      "snapshot_id",
+      "id_cartao",
+      "vigente_desde"
+    ],
+    "tags": {
+      "nr_projeto": "novarota",
+      "nr_camada": "gold",
+      "nr_dominio": "transacional",
+      "nr_dados": "sinteticos"
+    },
+    "columns": {
+      "snapshot_id": {
+        "descricao": "Identificador da versão completa dos dados. Filtrar um único snapshot para evitar somar versões. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "id_cartao": {
+        "descricao": "Identificador do cartão utilizado na tentativa de pagamento. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "id_conta": {
+        "descricao": "Identificador da conta do cliente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "tipo_cartao": {
+        "descricao": "Modalidade do cartão na origem: débito/crédito. Não inferir saldo a partir deste campo.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "limite": {
+        "descricao": "Limite cadastral simulado em BRL, não saldo disponível.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "status_cartao": {
+        "descricao": "Estado cadastral: ATIVO, CANCELADO ou BLOQUEADO.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "data_atualizacao": {
+        "descricao": "Instante UTC de vigência da alteração cadastral na origem CDC.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "operacao": {
+        "descricao": "Operação CDC: I inclusão, U atualização, D tombstone; D não apaga o histórico.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "vigente_desde": {
+        "descricao": "Início inclusivo UTC da versão histórica SCD2. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "vigente_ate": {
+        "descricao": "Fim exclusivo UTC da versão SCD2; nulo indica versão sem término conhecido.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      },
+      "row_key": {
+        "descricao": "Identificador técnico do registro dentro do snapshot, usado pelo MERGE idempotente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "chave_merge"
+        }
+      },
+      "payload_json": {
+        "descricao": "Conteúdo semântico preservado da origem, incluindo campos extras; pode conter tokens e nomes fictícios.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      }
+    }
+  },
+  "gold_dim_estabelecimento": {
+    "primary_key": [
+      "snapshot_id",
+      "id_estabelecimento"
+    ],
+    "tags": {
+      "nr_projeto": "novarota",
+      "nr_camada": "gold",
+      "nr_dominio": "transacional",
+      "nr_dados": "sinteticos"
+    },
+    "columns": {
+      "snapshot_id": {
+        "descricao": "Identificador da versão completa dos dados. Filtrar um único snapshot para evitar somar versões. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "row_key": {
+        "descricao": "Identificador técnico do registro dentro do snapshot, usado pelo MERGE idempotente.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "chave_merge"
+        }
+      },
+      "id_estabelecimento": {
+        "descricao": "Identificador derivado do nome do estabelecimento nesta fixture, sem cadastro externo. Componente da chave primária composta.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "pk"
+        }
+      },
+      "estabelecimento": {
+        "descricao": "Nome comercial simulado do estabelecimento.",
+        "tags": {
+          "nr_dados": "sinteticos",
+          "nr_papel": "atributo"
+        }
+      }
+    }
+  }
+}

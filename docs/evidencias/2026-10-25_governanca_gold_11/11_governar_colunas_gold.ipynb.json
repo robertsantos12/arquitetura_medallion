@@ -1,0 +1,93 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 11 — Descrições de colunas, PK e tags Gold\n",
+        "\n",
+        "Complementa o 10 já validado. Pré-valida todos os snapshots, aplica comentários, tags nr_* e NOT NULL nas PKs e declara PK informativa no Unity Catalog. Não altera valores, não recria tabelas nem reprocessa 06/07. Alteração de metadados estruturais deve ocorrer sem escritores concorrentes. Exige SELECT e autorização para alterar tabelas e aplicar tags. Falhas propagam; salve o output e retome após correção. Consulte docs/gold_colunas.md.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Confira catalogo=workspace antes de continuar.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 1 — catalogo=workspace, catálogo das tabelas Gold existentes.\n",
+        "dbutils.widgets.text('catalogo','workspace')\n",
+        "print('Confira catalogo=workspace antes de continuar.')\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "# CMD 2 — Importar módulo atualizado após Pull. Use uma sessão Python nova.\n",
+        "from pathlib import Path\n",
+        "import sys\n",
+        "p=Path.cwd().resolve()\n",
+        "raiz=next(p for p in [p,*p.parents] if (p/'docs/gold_colunas.json').is_file())\n",
+        "if str(raiz/'src') not in sys.path:sys.path.insert(0,str(raiz/'src'))\n",
+        "from medallion.governance.catalog import aplicar\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "gold_fato_transacao PRÉ-VALIDAÇÃO: OK\ngold_cliente_mes PRÉ-VALIDAÇÃO: OK\ngold_indicadores_risco PRÉ-VALIDAÇÃO: OK\ngold_features_cliente PRÉ-VALIDAÇÃO: OK\ngold_dim_cliente PRÉ-VALIDAÇÃO: OK\ngold_dim_conta PRÉ-VALIDAÇÃO: OK\ngold_dim_cartao PRÉ-VALIDAÇÃO: OK\ngold_dim_estabelecimento PRÉ-VALIDAÇÃO: OK\ngold_fato_transacao COLUNAS, PK E TAGS: OK [\"snapshot_id\", \"id_transacao\"]\ngold_cliente_mes COLUNAS, PK E TAGS: OK [\"snapshot_id\", \"id_cliente\", \"mes\"]\ngold_indicadores_risco COLUNAS, PK E TAGS: OK [\"snapshot_id\", \"id_transacao\"]\ngold_features_cliente COLUNAS, PK E TAGS: OK [\"snapshot_id\", \"id_cliente\", \"data_corte\"]\ngold_dim_cliente COLUNAS, PK E TAGS: OK [\"snapshot_id\", \"id_cliente\", \"vigente_desde\"]\ngold_dim_conta COLUNAS, PK E TAGS: OK [\"snapshot_id\", \"id_conta\", \"vigente_desde\"]\ngold_dim_cartao COLUNAS, PK E TAGS: OK [\"snapshot_id\", \"id_cartao\", \"vigente_desde\"]\ngold_dim_estabelecimento COLUNAS, PK E TAGS: OK [\"snapshot_id\", \"id_estabelecimento\"]\nGOVERNANÇA GOLD: OK\n{'tabelas': 8, 'colunas': 98}\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 3 — Pré-validar nulos/duplicatas e aplicar/reler metadados.\n",
+        "# Esperado: oito COLUNAS, PK E TAGS: OK e GOVERNANÇA GOLD: OK.\n",
+        "resultado=aplicar(spark,dbutils.widgets.get('catalogo').strip(),raiz)\n",
+        "print(resultado)\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Exporte com outputs e faça commit/push na branch chore/estrutura-inicial. PK é informativa e não garante unicidade de futuras escritas. As tags não são máscaras nem políticas de acesso. Após esta execução, repita apenas 09 com os snapshots já validados para conferir preservação dos dados. Não reexecute 06/07 para esta melhoria.\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Melhoria: Gostaria de uma linhagem disponivel no Unity catalog, para quando eu olhar o lineage dentro do catalogo eu posso ver a origem da gold da silver ate a bronze."
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
