@@ -1,6 +1,7 @@
 """Delta insert-only: snapshots completos e verificados, sem apagar histórico."""
 import re
-from datetime import datetime, date
+import json
+from datetime import datetime, date, timezone
 from decimal import Decimal
 from uuid import uuid4
 from medallion.silver.transform import canonical, digest
@@ -70,7 +71,15 @@ def table(config,layer,name):
 def read(spark,config,layer,snapshot):
     validar_snapshot(snapshot)
     marker=config.tabela_sql('controle','snapshots_homologacao')
-    if spark.sql(f"SELECT count(*) FROM {marker} WHERE snapshot_id='{snapshot}' AND camada='{layer}'").first()[0]!=1:
+    marks=spark.sql(f"SELECT * FROM {marker} WHERE snapshot_id='{snapshot}' AND camada='{layer}'").collect()
+    if len(marks)!=1:
         raise ValueError('Snapshot sem conclusão ou camada incorreta')
+    report=json.loads(marks[0]['relatorio_json'])
     fields=SILVER if layer=='silver' else GOLD
-    return {name:[{k:v for k,v in r.asDict().items() if k!='snapshot_id'} for r in spark.sql(f"SELECT * FROM {table(config,layer,name)} WHERE snapshot_id='{snapshot}'").collect()] for name in fields}
+    result={}
+    for name in fields:
+        rows=[r.asDict() for r in spark.sql(f"SELECT * FROM {table(config,layer,name)} WHERE snapshot_id='{snapshot}'").collect()]
+        if len(rows)!=report[name]['linhas'] or fingerprint(rows)!=report[name]['hash']:
+            raise ValueError('Snapshot diverge do marcador: '+name)
+        result[name]=[{k:(v.replace(tzinfo=timezone.utc) if isinstance(v,datetime) and v.tzinfo is None else v) for k,v in r.items() if k!='snapshot_id'} for r in rows]
+    return result
