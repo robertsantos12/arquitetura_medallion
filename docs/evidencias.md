@@ -38,3 +38,7 @@ A IA não consultou o Delta/Volume diretamente e não recebeu export do notebook
 O notebook exportado com outputs confirma 21 clientes distintos, 12.158 transações, 138 arquivos novos, três lotes, seis fontes e auditoria final SUCESSO com hashes verificados. RUN_ID: `45599d53-5189-4644-b92a-703eb3b5154d`. O notebook com outputs foi versionado em `notebooks/04_gerar_dados_sinteticos_v2.ipynb` e os detalhes estão em [evidências V2](evidencias/2026-10-24_geracao_sintetica_v2/README.md).
 
 O registro atesta a geração no Databricks, não a ingestão Bronze nem as camadas posteriores. A nota inicial deste documento é um histórico anterior à validação da V2.
+
+## Etapa 05 — Bronze V2 validada (24/10/2026)
+
+Quatro notebooks Databricks com outputs foram recebidos e arquivados na branch `chore/estrutura-inicial`: carga inicial, repetição da inicial, incremental e atrasada. Todos reportam `BRONZE V2: OK` e não têm outputs de erro; contagens finais de transações por lote: 6.080 / 4.560 / 1.518 (12.158). Consulte o [manifesto e os quatro exports](evidencias/2026-10-24_bronze_v2_exports/README.md) para hashes de origem, blobs versionados e limitações da evidência.
