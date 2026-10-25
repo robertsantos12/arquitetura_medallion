@@ -1,0 +1,32 @@
+{
+  "coleta_em": "2026-10-24T19:07:28.597899+00:00",
+  "arquivo": "03_reler_evidencias.ipynb.json",
+  "original_sha256": "a33a6be65c8eb9b0de7c02b6ce3fc62d8533eaf905b9b9d5f0225dda04060c57",
+  "publicado_sha256": "3d08905f9f6cb391eab0b439883caf20f913900eb4bd6ca612abfbfe1946e366",
+  "proveniencia": "Novo export fornecido pelo operador em resposta ao procedimento de reinicio do Python e reexecucao apenas do notebook 03.",
+  "reinicio_python": "Declaracao do operador pelo contexto de entrega; o export nao contem telemetria independente do reinicio.",
+  "resultados": [
+    {
+      "run_id": "4794325f-b6bd-466a-bb10-67ff31d24cc9",
+      "status": "SUCESSO",
+      "eventos": 3,
+      "codigo_sha256": "ef693dbac8b551516101baa1e2c7f029c08d970cd9e2feabd3480c1ca69d6a20",
+      "hashes_verificados": true
+    },
+    {
+      "run_id": "c6b2a18b-2fb9-43e6-8fbc-4f7ee936ed5a",
+      "status": "SUCESSO",
+      "eventos": 3,
+      "codigo_sha256": "ef693dbac8b551516101baa1e2c7f029c08d970cd9e2feabd3480c1ca69d6a20",
+      "hashes_verificados": true
+    },
+    {
+      "run_id": "66b44661-a153-4354-ba64-a2489341aa34",
+      "status": "FALHOU",
+      "eventos": 3,
+      "codigo_sha256": "ef693dbac8b551516101baa1e2c7f029c08d970cd9e2feabd3480c1ca69d6a20",
+      "hashes_verificados": true
+    }
+  ],
+  "metadados_databricks_removidos": true
+}

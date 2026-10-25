@@ -1,0 +1,103 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Etapa 1 — Validar persistência Delta\n",
+        "Execute todas as células no Databricks. O notebook cria apenas o schema de diagnóstico `medallion_dev_setup` no catálogo informado e a tabela `teste_delta`. Não remove objetos.\n",
+        "Valida criação de tabela, MERGE, atualização, releitura e repetição sem duplicidade. Isto ainda não comprova a idempotência do pipeline completo.\n",
+        "Ao concluir, compartilhe a saída da última célula. Não compartilhe credenciais.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import re\n",
+        "\n",
+        "dbutils.widgets.text(\"catalogo\", spark.catalog.currentCatalog())\n",
+        "catalogo = dbutils.widgets.get(\"catalogo\").strip()\n",
+        "if not re.fullmatch(r\"[A-Za-z_][A-Za-z0-9_]*\", catalogo):\n",
+        "    raise ValueError(\"Informe um catálogo com letras, números e sublinhado.\")\n",
+        "\n",
+        "schema = f\"`{catalogo}`.`medallion_dev_setup`\"\n",
+        "tabela = f\"{schema}.`teste_delta`\"\n",
+        "print(f\"Spark: {spark.version}\")\n",
+        "print(f\"Destino do teste: {tabela}\")\n",
+        "\n",
+        "spark.sql(f\"CREATE SCHEMA IF NOT EXISTS {schema}\")\n",
+        "spark.sql(f\"\"\"\n",
+        "    CREATE TABLE IF NOT EXISTS {tabela} (\n",
+        "        id BIGINT,\n",
+        "        descricao STRING\n",
+        "    ) USING DELTA\n",
+        "\"\"\")\n",
+        "formato = spark.sql(f\"DESCRIBE DETAIL {tabela}\").first()[\"format\"]\n",
+        "assert formato.lower() == \"delta\", f\"Formato inesperado: {formato}\"\n",
+        "\n"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Spark: 4.2.0\nDestino do teste: `workspace`.`medallion_dev_setup`.`teste_delta`\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def gravar(descricao):\n",
+        "    # Valores literais controlados exclusivamente por este notebook.\n",
+        "    if descricao not in (\"inserido\", \"atualizado\"):\n",
+        "        raise ValueError(\"Descrição de teste inválida\")\n",
+        "    spark.sql(f\"\"\"\n",
+        "        MERGE INTO {tabela} AS destino\n",
+        "        USING (SELECT CAST(1 AS BIGINT) AS id, '{descricao}' AS descricao) AS origem\n",
+        "        ON destino.id = origem.id\n",
+        "        WHEN MATCHED THEN UPDATE SET descricao = origem.descricao\n",
+        "        WHEN NOT MATCHED THEN INSERT (id, descricao)\n",
+        "        VALUES (origem.id, origem.descricao)\n",
+        "    \"\"\")\n",
+        "\n",
+        "gravar(\"inserido\")\n",
+        "gravar(\"atualizado\")\n",
+        "gravar(\"atualizado\")\n",
+        "\n",
+        "resultado = spark.table(tabela).where(\"id = 1\").collect()\n",
+        "assert len(resultado) == 1, f\"Esperada uma linha; encontradas {len(resultado)}\"\n",
+        "assert resultado[0][\"descricao\"] == \"atualizado\", \"Atualização não persistida\"\n",
+        "\n",
+        "print(\"VALIDAÇÃO DELTA: OK\")\n",
+        "print(f\"Catálogo: {catalogo}\")\n",
+        "print(\"Schema: medallion_dev_setup\")\n",
+        "print(\"Formato: delta\")\n",
+        "print(\"MERGE e releitura: OK\")\n",
+        "print(\"Repetição sem duplicidade para id=1: OK\")\n",
+        "\n"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "VALIDAÇÃO DELTA: OK\nCatálogo: workspace\nSchema: medallion_dev_setup\nFormato: delta\nMERGE e releitura: OK\nRepetição sem duplicidade para id=1: OK\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

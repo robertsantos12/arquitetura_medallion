@@ -1,0 +1,149 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Etapa 1 — Validar persistência Delta\n",
+        "O notebook cria apenas o schema de diagnóstico `medallion_dev_setup` no catálogo informado e a tabela `teste_delta`. Não remove objetos.\n",
+        "Valida criação de tabela, MERGE, atualização, releitura e repetição sem duplicidade. Isto ainda não comprova a idempotência do pipeline completo.\n",
+        "Ao concluir, compartilhe a saída da última célula. Não compartilhe credenciais.\n",
+        "\n",
+        "**Parâmetros:** execute apenas a primeira célula de código para exibir os widgets. Preencha os campos e depois execute as demais células. Use **Run all** quando os parâmetros já estiverem preenchidos.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Preencha os widgets acima e depois execute as próximas células.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# catalogo: preencha workspace (obrigatório). Define onde criar/consultar a tabela de diagnóstico.\n",
+        "# Nesta rodada, mantenha workspace para comparar com a validação anterior.\n",
+        "# Execute somente este CMD, preencha os widgets e então prossiga.\n",
+        "# 1. Exibir parâmetros — execute esta célula antes de preencher os campos.\n",
+        "dbutils.widgets.text(\"catalogo\", spark.catalog.currentCatalog())\n",
+        "\n",
+        "print(\"Preencha os widgets acima e depois execute as próximas células.\")\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Spark: 4.2.0\nDestino do teste: `workspace`.`medallion_dev_setup`.`teste_delta`\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 2 — Ler catalogo, validar seu formato e criar/verificar schema e tabela Delta. Nenhum preenchimento adicional.\n",
+        "import re\n",
+        "\n",
+        "catalogo = dbutils.widgets.get(\"catalogo\").strip()\n",
+        "if not re.fullmatch(r\"[A-Za-z_][A-Za-z0-9_]*\", catalogo):\n",
+        "    raise ValueError(\"Informe um catálogo com letras, números e sublinhado.\")\n",
+        "\n",
+        "schema = f\"`{catalogo}`.`medallion_dev_setup`\"\n",
+        "tabela = f\"{schema}.`teste_delta`\"\n",
+        "print(f\"Spark: {spark.version}\")\n",
+        "print(f\"Destino do teste: {tabela}\")\n",
+        "\n",
+        "spark.sql(f\"CREATE SCHEMA IF NOT EXISTS {schema}\")\n",
+        "spark.sql(f\"\"\"\n",
+        "    CREATE TABLE IF NOT EXISTS {tabela} (\n",
+        "        id BIGINT,\n",
+        "        descricao STRING\n",
+        "    ) USING DELTA\n",
+        "\"\"\")\n",
+        "formato = spark.sql(f\"DESCRIBE DETAIL {tabela}\").first()[\"format\"]\n",
+        "assert formato.lower() == \"delta\", f\"Formato inesperado: {formato}\"\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "VALIDAÇÃO DELTA: OK\nCatálogo: workspace\nSchema: medallion_dev_setup\nFormato: delta\nMERGE e releitura: OK\nRepetição sem duplicidade para id=1: OK\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 3 — Executar MERGEs e conferir uma única linha id=1 atualizada. Esperado: VALIDAÇÃO DELTA: OK.\n",
+        "def gravar(descricao):\n",
+        "    # Valores literais controlados exclusivamente por este notebook.\n",
+        "    if descricao not in (\"inserido\", \"atualizado\"):\n",
+        "        raise ValueError(\"Descrição de teste inválida\")\n",
+        "    spark.sql(f\"\"\"\n",
+        "        MERGE INTO {tabela} AS destino\n",
+        "        USING (SELECT CAST(1 AS BIGINT) AS id, '{descricao}' AS descricao) AS origem\n",
+        "        ON destino.id = origem.id\n",
+        "        WHEN MATCHED THEN UPDATE SET descricao = origem.descricao\n",
+        "        WHEN NOT MATCHED THEN INSERT (id, descricao)\n",
+        "        VALUES (origem.id, origem.descricao)\n",
+        "    \"\"\")\n",
+        "\n",
+        "gravar(\"inserido\")\n",
+        "gravar(\"atualizado\")\n",
+        "gravar(\"atualizado\")\n",
+        "\n",
+        "resultado = spark.table(tabela).where(\"id = 1\").collect()\n",
+        "assert len(resultado) == 1, f\"Esperada uma linha; encontradas {len(resultado)}\"\n",
+        "assert resultado[0][\"descricao\"] == \"atualizado\", \"Atualização não persistida\"\n",
+        "\n",
+        "print(\"VALIDAÇÃO DELTA: OK\")\n",
+        "print(f\"Catálogo: {catalogo}\")\n",
+        "print(\"Schema: medallion_dev_setup\")\n",
+        "print(\"Formato: delta\")\n",
+        "print(\"MERGE e releitura: OK\")\n",
+        "print(\"Repetição sem duplicidade para id=1: OK\")\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Coleta desta revalidação\n",
+        "\n",
+        "Após executar todos os CMDs, confira a mensagem final esperada. Se ocorrer erro, preserve o output e interrompa a sequência.\n",
+        "\n",
+        "Exporte este notebook como **IPYNB com outputs**, abra o arquivo e confirme que os resultados estão presentes. Salve o arquivo antes de limpar outputs ou mudar a sessão. Faça commit/push na branch `chore/estrutura-inicial`, registre o SHA e envie o export para revisão antes de avançar ao próximo notebook.\n",
+        "\n",
+        "Sugestão de commit: `docs: revalida 00_validar_delta com instrucoes de parametros`.\n",
+        "\n",
+        "O commit sozinho não comprova que os outputs foram incluídos. A cópia pública do export será revisada para remover e-mails e caminhos pessoais, com manifesto e hashes, preservando a coleta anterior. Esta rodada só será registrada como validada após revisão do novo export.\n"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

@@ -1,0 +1,19 @@
+{
+  "proveniencia": "Export real do operador, revisão de outputs em 25/10/2026 sem consulta direta ao Databricks.",
+  "parametros": {
+    "catalogo": "workspace",
+    "data_referencia": "2026-01-15"
+  },
+  "resultado": {
+    "raw_clientes_cdc_contrato_v2": 24,
+    "raw_contas_cdc_contrato_v2": 23,
+    "raw_cartoes_cdc_contrato_v2": 24,
+    "raw_transacoes_contrato_v2": 12158,
+    "raw_eventos_risco_contrato_v2": 4,
+    "raw_estornos_contrato_v2": 4
+  },
+  "status": "VALIDADO_CONTRATO_LOGICO_EM_VIEWS",
+  "original_sha256": "e826bd94e80575a1d5cecff7ef395bb2fe076b350bb440931c6333782d15b228",
+  "publicado_sha256": "19dd33a4d0c04a067e064da3a9505642ce2c5993c332da70bd0f770cde42f841",
+  "ressalvas": "Metadados novos em views; batch_id derivado por lote legado, não UUID original. Tabelas raw sem migração física."
+}

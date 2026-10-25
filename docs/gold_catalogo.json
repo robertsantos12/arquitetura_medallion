@@ -1,0 +1,42 @@
+{
+  "gold_fato_transacao": {
+    "descricao": "Tentativas de pagamento com vínculo temporal válido e valores bruto, estornado e líquido. Recusas/cancelamentos têm gasto zero.",
+    "grao": "snapshot_id + id_transacao",
+    "comentario": "Tentativas de pagamento com vínculo temporal válido e valores bruto, estornado e líquido. Recusas/cancelamentos têm gasto zero. Grão: snapshot_id + id_transacao. Filtrar um snapshot_id completo; não somar snapshots. Valores monetários em BRL; datas UTC."
+  },
+  "gold_cliente_mes": {
+    "descricao": "Comportamento mensal do cliente: tentativas, aprovações, recusas, cancelamentos e valores. Estornos até o corte são atribuídos ao mês da compra.",
+    "grao": "snapshot_id + id_cliente + mes",
+    "comentario": "Comportamento mensal do cliente: tentativas, aprovações, recusas, cancelamentos e valores. Estornos até o corte são atribuídos ao mês da compra. Grão: snapshot_id + id_cliente + mes. Filtrar um snapshot_id completo; não somar snapshots. Valores monetários em BRL; datas UTC."
+  },
+  "gold_indicadores_risco": {
+    "descricao": "Contagem de eventos e chargebacks por transação, com estornos até o corte. Chargeback não gera segundo débito financeiro.",
+    "grao": "snapshot_id + id_transacao",
+    "comentario": "Contagem de eventos e chargebacks por transação, com estornos até o corte. Chargeback não gera segundo débito financeiro. Grão: snapshot_id + id_transacao. Filtrar um snapshot_id completo; não somar snapshots. Valores monetários em BRL; datas UTC."
+  },
+  "gold_features_cliente": {
+    "descricao": "Frequência, recusa, gasto líquido e recência dos clientes com tentativas até data_corte. Corte por evento, sem garantia de disponibilidade histórica por chegada.",
+    "grao": "snapshot_id + id_cliente + data_corte",
+    "comentario": "Frequência, recusa, gasto líquido e recência dos clientes com tentativas até data_corte. Corte por evento, sem garantia de disponibilidade histórica por chegada. Grão: snapshot_id + id_cliente + data_corte. Filtrar um snapshot_id completo; não somar snapshots. Valores monetários em BRL; datas UTC."
+  },
+  "gold_dim_cliente": {
+    "descricao": "Histórico cadastral do cliente com intervalos [vigente_desde, vigente_ate). Associar fato por cliente_versao = row_key e snapshot_id.",
+    "grao": "snapshot_id + id_cliente + vigente_desde",
+    "comentario": "Histórico cadastral do cliente com intervalos [vigente_desde, vigente_ate). Associar fato por cliente_versao = row_key e snapshot_id. Grão: snapshot_id + id_cliente + vigente_desde. Filtrar um snapshot_id completo; não somar snapshots. Valores monetários em BRL; datas UTC."
+  },
+  "gold_dim_conta": {
+    "descricao": "Histórico da conta e seu estado. Associar fato por conta_versao = row_key e snapshot_id.",
+    "grao": "snapshot_id + id_conta + vigente_desde",
+    "comentario": "Histórico da conta e seu estado. Associar fato por conta_versao = row_key e snapshot_id. Grão: snapshot_id + id_conta + vigente_desde. Filtrar um snapshot_id completo; não somar snapshots. Valores monetários em BRL; datas UTC."
+  },
+  "gold_dim_cartao": {
+    "descricao": "Histórico do cartão, limite e status. Associar fato por cartao_versao = row_key e snapshot_id.",
+    "grao": "snapshot_id + id_cartao + vigente_desde",
+    "comentario": "Histórico do cartão, limite e status. Associar fato por cartao_versao = row_key e snapshot_id. Grão: snapshot_id + id_cartao + vigente_desde. Filtrar um snapshot_id completo; não somar snapshots. Valores monetários em BRL; datas UTC."
+  },
+  "gold_dim_estabelecimento": {
+    "descricao": "Estabelecimentos identificados por hash do nome na fixture. Colisões de nomes comerciais distintos exigirão chave externa futura.",
+    "grao": "snapshot_id + id_estabelecimento",
+    "comentario": "Estabelecimentos identificados por hash do nome na fixture. Colisões de nomes comerciais distintos exigirão chave externa futura. Grão: snapshot_id + id_estabelecimento. Filtrar um snapshot_id completo; não somar snapshots. Valores monetários em BRL; datas UTC."
+  }
+}

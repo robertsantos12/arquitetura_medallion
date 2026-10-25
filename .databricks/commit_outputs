@@ -1,0 +1,5 @@
+# Preserva os outputs dos notebooks do projeto nos commits do Databricks.
+# Requer habilitar exportação de outputs nas configurações do workspace.
+# Padrões são relativos à raiz do repositório.
+notebooks/**
+teste_ambiente.ipynb

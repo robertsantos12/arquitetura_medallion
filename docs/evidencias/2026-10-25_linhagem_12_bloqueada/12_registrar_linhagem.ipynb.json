@@ -1,0 +1,172 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 12 — Linhagem declarada no Unity Catalog\n",
+        "\n",
+        "Adiciona metadados e relações via API oficial de external lineage. Não altera tabelas, snapshots ou dados. O grafo terá nós intermediários de transformação Python: Gold ← processo declarado ← Silver ← processo declarado ← Bronze. Não equivale à captura automática de execução. Leia docs/linhagem_unity_catalog.md.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Preencha catalogo=workspace antes de prosseguir.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 1 — catalogo=workspace: catálogo já validado.\n",
+        "dbutils.widgets.text('catalogo','workspace')\n",
+        "print('Preencha catalogo=workspace antes de prosseguir.')\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "{'bridge': 'nr_python_febf1618a0170b1deb246fcd', 'target': 'workspace.medallion_dev_prata.silver_clientes_cdc', 'sources': ['workspace.medallion_dev_bronze.raw_clientes_cdc'], 'definition_hash': 'd5e4787b8837c992454a153e4d2dc5b2034a1651c423757a133450f8a33f7261'}\n{'bridge': 'nr_python_728723ad74ca3a6af39a6309', 'target': 'workspace.medallion_dev_prata.silver_contas_cdc', 'sources': ['workspace.medallion_dev_bronze.raw_contas_cdc', 'workspace.medallion_dev_prata.silver_clientes_cdc'], 'definition_hash': '04dd45de74afd9cf864d4c98929d0ca8213a6a06ea3ed741adcb50c0ad062c9c'}\n{'bridge': 'nr_python_3362b876f65674b0adbd67ae', 'target': 'workspace.medallion_dev_prata.silver_cartoes_cdc', 'sources': ['workspace.medallion_dev_bronze.raw_cartoes_cdc', 'workspace.medallion_dev_prata.silver_contas_cdc', 'workspace.medallion_dev_prata.silver_clientes_cdc'], 'definition_hash': 'a1749af44f2096a85ce73ba5cd1402a4a6523c8a541dd8debb67c2363325ee01'}\n{'bridge': 'nr_python_283df9e0390edc5594b6c6cf', 'target': 'workspace.medallion_dev_prata.silver_transacoes', 'sources': ['workspace.medallion_dev_bronze.raw_transacoes', 'workspace.medallion_dev_prata.silver_clientes_cdc', 'workspace.medallion_dev_prata.silver_contas_cdc', 'workspace.medallion_dev_prata.silver_cartoes_cdc'], 'definition_hash': '8f2f09bbbd86e3075b32d170500879d8f7bdc3c602bc7934fb3751d27de932bf'}\n{'bridge': 'nr_python_d31171205c979e37b736673b', 'target': 'workspace.medallion_dev_prata.silver_eventos_risco', 'sources': ['workspace.medallion_dev_bronze.raw_eventos_risco', 'workspace.medallion_dev_prata.silver_transacoes'], 'definition_hash': '0b8a96d49640c935cc1b0542adabba6433dab558ef36c5592d0ecb55d8c09cc9'}\n{'bridge': 'nr_python_a899b698c37c285fe4623101', 'target': 'workspace.medallion_dev_prata.silver_estornos', 'sources': ['workspace.medallion_dev_bronze.raw_estornos', 'workspace.medallion_dev_prata.silver_transacoes'], 'definition_hash': '36e47e21d38db4613b7b38102960ef463337df2cea2bef231871635dc6b31810'}\n{'bridge': 'nr_python_6e3d5d52f0b21d6f001fe509', 'target': 'workspace.medallion_dev_prata.silver_quarentena', 'sources': ['workspace.medallion_dev_bronze.raw_clientes_cdc', 'workspace.medallion_dev_bronze.raw_contas_cdc', 'workspace.medallion_dev_bronze.raw_cartoes_cdc', 'workspace.medallion_dev_bronze.raw_transacoes', 'workspace.medallion_dev_bronze.raw_eventos_risco', 'workspace.medallion_dev_bronze.raw_estornos'], 'definition_hash': '4e3acd89283f3b06ea822259b5b6f31551664f69d1f848fd5366acb78c4a7c25'}\n{'bridge': 'nr_python_c6daa02113d744fbc40d3b76', 'target': 'workspace.medallion_dev_ouro.gold_fato_transacao', 'sources': ['workspace.medallion_dev_prata.silver_transacoes', 'workspace.medallion_dev_prata.silver_estornos'], 'definition_hash': '69c1dda16d185edd34119ff8e05d25368b8c131e5f6963949f0739b21b409038'}\n{'bridge': 'nr_python_3012eaeca0e223b6add8df4e', 'target': 'workspace.medallion_dev_ouro.gold_cliente_mes', 'sources': ['workspace.medallion_dev_prata.silver_transacoes', 'workspace.medallion_dev_prata.silver_estornos'], 'definition_hash': '9d222aeb22dd05d3f4d128c6dce1a3149ed49c8ae0cd784e1029dba8665c105e'}\n{'bridge': 'nr_python_4bf0733c4cc13aab7cc78e38', 'target': 'workspace.medallion_dev_ouro.gold_features_cliente', 'sources': ['workspace.medallion_dev_prata.silver_transacoes', 'workspace.medallion_dev_prata.silver_estornos'], 'definition_hash': 'cc1cd61ad0e791e8629af57d2ba503cced06fe29d776f2fa03c4b171affd328b'}\n{'bridge': 'nr_python_6cf728f56e3120d26455c1e8', 'target': 'workspace.medallion_dev_ouro.gold_indicadores_risco', 'sources': ['workspace.medallion_dev_prata.silver_transacoes', 'workspace.medallion_dev_prata.silver_eventos_risco', 'workspace.medallion_dev_prata.silver_estornos'], 'definition_hash': 'a87c1a13ac5e877ddc2316e422f8bb7fad50d4dff16fe5b10f23c8754dc8630c'}\n{'bridge': 'nr_python_6a4c4bfe00d261411b62e51f', 'target': 'workspace.medallion_dev_ouro.gold_dim_cliente', 'sources': ['workspace.medallion_dev_prata.silver_clientes_cdc'], 'definition_hash': '19057d4fef44d318150ed71f987ad44ce3d572281134ea07c2b7c3fba4c2b63e'}\n{'bridge': 'nr_python_e45ac5eedcff85fa029bce85', 'target': 'workspace.medallion_dev_ouro.gold_dim_conta', 'sources': ['workspace.medallion_dev_prata.silver_contas_cdc'], 'definition_hash': 'ac14cec030b6a55939c042b86dd635690681824ec540b0b68fef637863da33f0'}\n{'bridge': 'nr_python_0959967069bc0b2c034d2438', 'target': 'workspace.medallion_dev_ouro.gold_dim_cartao', 'sources': ['workspace.medallion_dev_prata.silver_cartoes_cdc'], 'definition_hash': 'e1cf3d402ca64846eb7941f9c92146959e5146705c9865974030e55644cad9cc'}\n{'bridge': 'nr_python_33d79372cacb5e42ecd1d08c', 'target': 'workspace.medallion_dev_ouro.gold_dim_estabelecimento', 'sources': ['workspace.medallion_dev_prata.silver_transacoes'], 'definition_hash': 'adb8475cc00955e9d14f8a86902ca061ff59651e16cbe29dee24aa45dcec6003'}\n"
+          ]
+        }
+      ],
+      "source": [
+        "# CMD 2 — Importar o módulo atualizado. Use nova sessão Python após Pull.\n",
+        "from pathlib import Path\n",
+        "import sys\n",
+        "p=Path.cwd().resolve()\n",
+        "raiz=next(p for p in [p,*p.parents] if (p/'src/medallion/governance/lineage.py').is_file())\n",
+        "if str(raiz/'src') not in sys.path:sys.path.insert(0,str(raiz/'src'))\n",
+        "from medallion.governance.lineage import plano,registrar\n",
+        "for passo in plano(dbutils.widgets.get('catalogo').strip()):print(passo)\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 0,
+      "metadata": {},
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "---------------------------------------------------------------------------\n",
+              "PermissionDenied                          Traceback (most recent call last)\n",
+              "File <command-5785560409519009>, line 6\n",
+              "      1 # CMD 3 — Criar metadados declarados e verificar relações pela API.\n",
+              "      2 # Requer API disponível e CREATE EXTERNAL METADATA no metastore,\n",
+              "      3 # MODIFY nos objetos externos, MODIFY nas origens UC e SELECT nos destinos.\n",
+              "      4 # Autenticação nativa do notebook; não cole tokens no código.\n",
+              "      5 # Se houver erro de disponibilidade/permissão, pare e envie o output.\n",
+              "----> 6 resultado=registrar(spark,dbutils.widgets.get('catalogo').strip())\n",
+              "\n",
+              "File [CAMINHO_PESSOAL_REMOVIDO] in registrar(spark, catalog)\n",
+              "     58 try:old=api.do('GET',API+'external-metadata/'+p['bridge'])\n",
+              "     59 except NotFound:\n",
+              "---> 60     api.do('POST',API+'external-metadata',body=body)\n",
+              "     61     old=api.do('GET',API+'external-metadata/'+p['bridge'])\n",
+              "     62 if old.get('properties',{}).get('nr_definition_hash')!=p['definition_hash'] or old.get('properties',{}).get('nr_projeto')!='novarota':raise ValueError('Metadado incompatível; não será sobrescrito: '+p['bridge'])\n",
+              "\n",
+              "File /databricks/python/lib/python3.12/site-packages/databricks/sdk/core.py:95, in ApiClient.do(self, method, path, url, query, headers, body, raw, files, data, auth, response_headers)\n",
+              "     91 # Merge custom headers with request-specific headers\n",
+              "     92 # Request-specific headers take precedence\n",
+              "     93 merged_headers = {**self._cfg._custom_headers, **(headers or {})}\n",
+              "---> 95 return self._api_client.do(\n",
+              "     96     method=method,\n",
+              "     97     url=url,\n",
+              "     98     query=query,\n",
+              "     99     headers=merged_headers,\n",
+              "    100     body=body,\n",
+              "    101     raw=raw,\n",
+              "    102     files=files,\n",
+              "    103     data=data,\n",
+              "    104     auth=auth,\n",
+              "    105     response_headers=response_headers,\n",
+              "    106 )\n",
+              "\n",
+              "File /databricks/python/lib/python3.12/site-packages/databricks/sdk/_base_client.py:197, in _BaseClient.do(self, method, url, query, headers, body, raw, files, data, auth, response_headers)\n",
+              "    194     logger.debug(f\"Retry disabled for non-seekable stream: type={type(data)}\")\n",
+              "    195     call = self._perform\n",
+              "--> 197 response = call(\n",
+              "    198     method,\n",
+              "    199     url,\n",
+              "    200     query=query,\n",
+              "    201     headers=headers,\n",
+              "    202     body=body,\n",
+              "    203     raw=raw,\n",
+              "    204     files=files,\n",
+              "    205     data=data,\n",
+              "    206     auth=auth,\n",
+              "    207 )\n",
+              "    209 resp = dict()\n",
+              "    210 for header in response_headers if response_headers else []:\n",
+              "\n",
+              "File /databricks/python/lib/python3.12/site-packages/databricks/sdk/retries.py:59, in retried.<locals>.decorator.<locals>.wrapper(*args, **kwargs)\n",
+              "     55         retry_reason = f\"{type(err).__name__} is allowed to retry\"\n",
+              "     57 if retry_reason is None:\n",
+              "     58     # raise if exception is not retryable\n",
+              "---> 59     raise err\n",
+              "     61 logger.debug(f\"Retrying: {retry_reason} (sleeping ~{sleep}s)\")\n",
+              "     62 if before_retry:\n",
+              "\n",
+              "File /databricks/python/lib/python3.12/site-packages/databricks/sdk/retries.py:38, in retried.<locals>.decorator.<locals>.wrapper(*args, **kwargs)\n",
+              "     36 while clock.time() < deadline and (max_attempts is None or attempt <= max_attempts):\n",
+              "     37     try:\n",
+              "---> 38         return func(*args, **kwargs)\n",
+              "     39     except Exception as err:\n",
+              "     40         last_err = err\n",
+              "\n",
+              "File /databricks/python/lib/python3.12/site-packages/databricks/sdk/_base_client.py:299, in _BaseClient._perform(self, method, url, query, headers, body, raw, files, data, auth)\n",
+              "    297 error = self._error_parser.get_api_error(response)\n",
+              "    298 if error is not None:\n",
+              "--> 299     raise error from None\n",
+              "    301 return response\n",
+              "\n",
+              "PermissionDenied: Principal '[IDENTIDADE_REMOVIDA]' does not have CREATE EXTERNAL METADATA on Metastore 'metastore_aws_us_east_2'. Config: host=[HOST_WORKSPACE_REMOVIDO], auth_type=runtime"
+            ]
+          }
+        }
+      ],
+      "source": [
+        "# CMD 3 — Criar metadados declarados e verificar relações pela API.\n",
+        "# Requer API disponível e CREATE EXTERNAL METADATA no metastore,\n",
+        "# MODIFY nos objetos externos, MODIFY nas origens UC e SELECT nos destinos.\n",
+        "# Autenticação nativa do notebook; não cole tokens no código.\n",
+        "# Se houver erro de disponibilidade/permissão, pare e envie o output.\n",
+        "resultado=registrar(spark,dbutils.widgets.get('catalogo').strip())\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Conferência visual obrigatória\n",
+        "\n",
+        "Após LINHAGEM DECLARADA: OK, abra Catalog → workspace → medallion_dev_ouro → gold_fato_transacao → Lineage. Expanda upstream pelos nós nr_python_* e Silver até Bronze. A visibilidade depende das permissões e atualização da UI. Envie export com outputs e captura do grafo. Não declarar sucesso visual apenas pelo retorno da API. Não reexecute 06/07. Não apague checkpoints, dados ou metadados para contornar erros.\n"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

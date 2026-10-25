@@ -1,0 +1,1 @@
+"""Transformações determinísticas Silver."""
